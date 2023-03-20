@@ -54,8 +54,78 @@ class Recipe(models.Model):
     )
     time = models.TimeField(verbose_name="Время приготовления")
 
+    class Meta:
+        ordering = ("-pub_date",)
+        verbose_name = "Рецепт"
+        verbose_name_plural = "Рецепты"
+
+    def __str__(self):
+        return self.title
+
 
 class Subscription(models.Model):
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="follower",
+        verbose_name="Подписчик",
+    )
+    author = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="following",
+        verbose_name="Автор",
+    )
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["user", "author"],
+                name="User can't subscribe on himself",
+            )
+        ]
+        verbose_name = "Подписка"
+        verbose_name_plural = "Подписки"
+
+    def __str__(self):
+        return (
+            f"Подписка пользователя {self.user.username}"
+            f" на автора {self.author.username}"
+        )
+    
+
+class Favorite(models.Model):
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="follower",
+        verbose_name="Подписчик",
+    )
+    author = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="following",
+        verbose_name="Автор",
+    )
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["user", "author"],
+                name="User can't subscribe on himself",
+            )
+        ]
+        verbose_name = "Подписка"
+        verbose_name_plural = "Подписки"
+
+    def __str__(self):
+        return (
+            f"Подписка пользователя {self.user.username}"
+            f" на автора {self.author.username}"
+        )
+    
+
+class ShoppingCard(models.Model):
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
