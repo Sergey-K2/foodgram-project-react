@@ -1,19 +1,28 @@
 from django.contrib.auth import get_user_model
 from django.db import models
 
+CHOICES_UNITS_OF_MEASUREMENT = (
+    ("Кг", "Килограмм"),
+    ("Гр", "Грамм"),
+    ("Мг", "Миллиграм"),
+    ("Шт", "Штук"),
+)
+
 User = get_user_model()
 
 
 class Tag(models.Model):
     title = models.CharField(verbose_name="Название", unique=True)
     slug = models.SlugField(verbose_name="Идентификатор тэга", unique=True)
-    color = models.CharField(max_length=16, unique=True)
+    color = models.CharField(max_length=6, unique=True)
 
 
 class Ingredient(models.Model):
     title = models.CharField(verbose_name="Название", unique=True)
     amount = models.IntegerField(verbose_name="Количество")
-    unit = models.CharField(verbose_name="Единицы измерения")
+    unit = models.CharField(
+        verbose_name="Единицы измерения", choices=CHOICES_UNITS_OF_MEASUREMENT
+    )
 
 
 class TagRecipe(models.Model):
@@ -53,6 +62,8 @@ class Recipe(models.Model):
         through=TagRecipe,
     )
     time = models.TimeField(verbose_name="Время приготовления")
+    is_in_favorite = models.BooleanField(verbose_name="В избранном?")
+    is_in_shopping_cart = models.BooleanField(verbose_name="В списке покупок?")
 
     class Meta:
         ordering = ("-pub_date",)
@@ -92,7 +103,7 @@ class Subscription(models.Model):
             f"Подписка пользователя {self.user.username}"
             f" на автора {self.author.username}"
         )
-    
+
 
 class Favorite(models.Model):
     user = models.ForeignKey(
@@ -123,7 +134,7 @@ class Favorite(models.Model):
             f"Подписка пользователя {self.user.username}"
             f" на автора {self.author.username}"
         )
-    
+
 
 class ShoppingCard(models.Model):
     user = models.ForeignKey(

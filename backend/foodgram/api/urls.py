@@ -21,12 +21,12 @@ v1_router.register(
     basename="favorites",
 )
 v1_router.register(
-    r"recipes/(?P<recipe_id>\d+)/favorites",
+    r"recipes/(?P<recipe_id>\d+)/shopping_cart",
     ShoppingCardViewSet,
     basename="shopping_cart",
 )
 v1_router.register("tag", TagViewSet, basename="tags")
-v1_router.register("ingredients", IngredientViewSet, basename="tags")
+v1_router.register("ingredients", IngredientViewSet, basename="ingredients")
 v1_router.register(
     "subscriptions", SubscriptionViewSet, basename="subscriptions"
 )
