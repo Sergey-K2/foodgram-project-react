@@ -39,6 +39,13 @@ class IngredientSerializer(ModelSerializer):
         model = Ingredient
         fields = "__all__"
 
+    def validate_amount(self, amount):
+        if amount not in range(0, 32768):
+            return (
+                "Количество ингредиента должно быть в интервале от 0 до 32767"
+            )
+        return amount
+
 
 class TagSerializer(ModelSerializer):
     class Meta:

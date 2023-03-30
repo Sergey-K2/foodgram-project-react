@@ -20,7 +20,7 @@ from recipes.models import (
     Subscription,
     ShoppingCard,
     Favorite,
-    Users,
+    User,
 )
 from .serializers import (
     RecipeSerializer,

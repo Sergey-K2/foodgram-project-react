@@ -1,38 +1,43 @@
 from django.contrib.auth import get_user_model
 from django.db import models
 
-CHOICES_UNITS_OF_MEASUREMENT = (
-    ("Кг", "Килограмм"),
-    ("Гр", "Грамм"),
-    ("Мг", "Миллиграм"),
-    ("Шт", "Штук"),
-)
 
 User = get_user_model()
 
 
 class Tag(models.Model):
-    title = models.CharField(verbose_name="Название", unique=True)
+    title = models.CharField(
+        verbose_name="Название", unique=True, max_length=100
+    )
     slug = models.SlugField(verbose_name="Идентификатор тэга", unique=True)
     color = models.CharField(max_length=6, unique=True)
 
+    class Meta:
+        ordering = ("-title",)
+        verbose_name = "Тэг"
+        verbose_name_plural = "Тэги"
+
 
 class Ingredient(models.Model):
-    title = models.CharField(verbose_name="Название", unique=True)
-    amount = models.IntegerField(verbose_name="Количество")
-    unit = models.CharField(
-        verbose_name="Единицы измерения", choices=CHOICES_UNITS_OF_MEASUREMENT
+    CHOICES_UNITS_OF_MEASUREMENT = (
+        ("Кг", "Килограмм"),
+        ("Гр", "Грамм"),
+        ("Мг", "Миллиграм"),
+        ("Шт", "Штук"),
     )
 
+    title = models.CharField(
+        verbose_name="Название", unique=True, max_length=100
+    )
+    amount = models.PositiveSmallIntegerField(verbose_name="Количество")
+    unit = models.CharField(
+        verbose_name="Единицы измерения",
+        choices=CHOICES_UNITS_OF_MEASUREMENT,
+        max_length=100,
+    )
 
-class TagRecipe(models.Model):
-    tag = models.ForeignKey(on_delete=models.CASCADE)
-    recipe = models.ForeignKey(on_delete=models.CASCADE)
-
-
-class IngredientRecipe(models.Model):
-    ingredient = models.ForeignKey(on_delete=models.CASCADE)
-    recipe = models.ForeignKey(on_delete=models.CASCADE)
+    class Meta:
+        ordering = ("-title",)
 
 
 class Recipe(models.Model):
@@ -42,6 +47,7 @@ class Recipe(models.Model):
         related_name="recipe",
         verbose_name="Автор",
     )
+    pub_date = models.DateTimeField("Дата публикации", auto_now_add=True)
     title = models.CharField(verbose_name="Название", max_length=200)
     image = models.ImageField(
         verbose_name="Картинка", upload_to="recipes/images/"
@@ -49,19 +55,15 @@ class Recipe(models.Model):
     description = models.TextField(verbose_name="Описание")
     ingredient = models.ManyToManyField(
         Ingredient,
-        on_delete=models.SET_NULL,
         related_name="recipe",
         verbose_name="Ингридиент",
-        through=IngredientRecipe,
     )
     tag = models.ManyToManyField(
         Tag,
-        on_delete=models.SET_NULL,
         related_name="recipe",
         verbose_name="Тэг",
-        through=TagRecipe,
     )
-    time = models.TimeField(verbose_name="Время приготовления")
+    time = models.PositiveSmallIntegerField(verbose_name="Время приготовления")
     is_in_favorite = models.BooleanField(verbose_name="В избранном?")
     is_in_shopping_cart = models.BooleanField(verbose_name="В списке покупок?")
 
@@ -72,6 +74,16 @@ class Recipe(models.Model):
 
     def __str__(self):
         return self.title
+
+
+class TagRecipe(models.Model):
+    tag = models.ForeignKey(Tag, on_delete=models.CASCADE)
+    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)
+
+
+class IngredientRecipe(models.Model):
+    ingredient = models.ForeignKey(Ingredient, on_delete=models.CASCADE)
+    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)
 
 
 class Subscription(models.Model):
@@ -109,23 +121,18 @@ class Favorite(models.Model):
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name="follower",
+        related_name="follow",
         verbose_name="Подписчик",
     )
-    author = models.ForeignKey(
-        User,
+    Recipe = models.ForeignKey(
+        Recipe,
         on_delete=models.CASCADE,
-        related_name="following",
+        related_name="follow",
         verbose_name="Автор",
     )
+    added = models.DateTimeField("Дата и время публикации", auto_now_add=True)
 
     class Meta:
-        constraints = [
-            models.UniqueConstraint(
-                fields=["user", "author"],
-                name="User can't subscribe on himself",
-            )
-        ]
         verbose_name = "Подписка"
         verbose_name_plural = "Подписки"
 
@@ -140,23 +147,18 @@ class ShoppingCard(models.Model):
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name="follower",
+        related_name="foll",
         verbose_name="Подписчик",
     )
-    author = models.ForeignKey(
-        User,
+    recipe = models.ForeignKey(
+        Recipe,
         on_delete=models.CASCADE,
-        related_name="following",
+        related_name="foll",
         verbose_name="Автор",
     )
+    added = models.DateTimeField("Дата и время публикации", auto_now_add=True)
 
     class Meta:
-        constraints = [
-            models.UniqueConstraint(
-                fields=["user", "author"],
-                name="User can't subscribe on himself",
-            )
-        ]
         verbose_name = "Подписка"
         verbose_name_plural = "Подписки"
 
