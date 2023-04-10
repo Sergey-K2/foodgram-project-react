@@ -1,6 +1,11 @@
+from django.db.models import Sum
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
+from rest_framework import exceptions
 from rest_framework import filters
 from rest_framework import mixins
+from rest_framework.decorators import action
+from rest_framework.response import Response
 from rest_framework.viewsets import (
     ModelViewSet,
     ReadOnlyModelViewSet,
@@ -18,7 +23,7 @@ from recipes.models import (
     Tag,
     Ingredient,
     Subscription,
-    ShoppingCard,
+    ShoppingCart,
     Favorite,
     User,
 )
@@ -27,8 +32,6 @@ from .serializers import (
     TagSerializer,
     IngredientSerializer,
     SubscriptionSerializer,
-    ShoppingCardSerializer,
-    FavoriteSerializer,
 )
 
 
@@ -59,6 +62,78 @@ class RecipeViewSet(ModelViewSet):
     permission_classes = (AuthenticatedOrAuthorOrReadOnly,)
     pagination_class = LimitOffsetPagination
 
+    @action(detail=True, methods=["post", "delete"])
+    def favorite(self, request, pk=None):
+        user = self.request.user
+        recipe = get_object_or_404(Recipe, pk=pk)
+
+        if self.request.method == "DELETE":
+            if not Favorite.objects.filter(user=user, recipe=recipe).exists():
+                raise exceptions.ValidationError("Рецепт не в избранном!")
+            get_object_or_404(Favorite, user=user, recipe=recipe).delete()
+            return Response()
+
+        if self.request.method == "POST":
+            if Favorite.objects.filter(user=user, recipe=recipe).exists():
+                raise exceptions.ValidationError(
+                    "Рецепт уже добавлен в избранное!"
+                )
+
+            Favorite.objects.create(user=user, recipe=recipe)
+            serializer = RecipeSerializer(
+                recipe, context={"request": request}, many=True
+            )
+            return Response(serializer.data)
+
+    @action(detail=True, methods=["post", "delete"])
+    def shopping_cart(self, request, pk=None):
+        user = self.request.user
+        recipe = get_object_or_404(Recipe, pk=pk)
+
+        if self.request.method == "DELETE":
+            if not ShoppingCart.objects.filter(
+                user=user, recipe=recipe
+            ).exists():
+                raise exceptions.ValidationError("Рецепт не в списке покупок!")
+            shopping_cart = get_object_or_404(
+                ShoppingCart, user=user, recipe=recipe
+            ).delete()
+            return Response()
+
+        if self.request.method == "POST":
+            if ShoppingCart.objects.filter(user=user, recipe=recipe).exists():
+                raise exceptions.ValidationError(
+                    "Рецепт уже добавлен в список покупок!"
+                )
+            ShoppingCart.objects.create(user=user, recipe=recipe)
+            serializer = RecipeSerializer(
+                recipe, context={"request": request}, many=True
+            )
+            return Response(serializer.data)
+
+    @action(detail=True, methods=["get"])
+    def download_shopping_cart(self, request):
+        shopping_cart = ShoppingCart.objects.filter(user=self.request.user)
+        recipes = [element.recipe.id for element in shopping_cart]
+        shopping_list = (
+            Ingredient.objects.filter(recipe__in=recipes)
+            .values("ingredient")
+            .annotate(amount=Sum("amount"))
+        )
+        text = "Перечень ингредиентов для рецептов: \n"
+        for element in shopping_list:
+            ingredient = Ingredient.objects.get(pk=element["ingredient"])
+            text += (
+                f"{ingredient.name} ({ingredient.unit}) - {element.amount}\n"
+            )
+        return HttpResponse(
+            text,
+            content_type="text/plain",
+            headers={
+                "Content-Disposition": "attachment; filename=shopping-list.txt"
+            },
+        )
+
 
 class TagViewSet(ListRetrieveViewSet):
     queryset = Tag.objects.all()
@@ -82,26 +157,3 @@ class SubscriptionViewSet(ListCreateDestroyViewSet):
 
     def get_queryset(self):
         return self.request.user.follower.all()
-
-
-class ShoppingCardViewSet(ListCreateDestroyViewSet):
-    serializer_class = ShoppingCardSerializer
-    permission_classes = (IsAuthenticated,)
-
-    def perform_create(self):
-        pass
-
-    def get_queryset(self):
-        pass
-
-
-class FavoriteViewSet(CreateDeleteViewSet):
-    serializer_class = FavoriteSerializer
-    permission_classes = (IsAuthenticated,)
-    pagination_class = LimitOffsetPagination
-
-    def perform_create(self):
-        pass
-
-    def get_queryset(self):
-        pass

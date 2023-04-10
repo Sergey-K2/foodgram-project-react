@@ -14,7 +14,7 @@ from recipes.models import (
     Subscription,
     User,
     Favorite,
-    ShoppingCard,
+    ShoppingCart,
 )
 
 
@@ -57,30 +57,58 @@ class RecipeSerializer(ModelSerializer):
     author = serializers.SlugRelatedField(
         slug_field="author", many=True, read_only=True
     )
-    tag = serializers.SlugRelatedField(
-        slug_field="tag", many=True, read_only=True
-    )
+    tag = TagSerializer(many=True)
+    ingredient = IngredientSerializer(many=True)
     image = Base64ImageField()
+    is_in_favorite = serializers.SerializerMethodField()
+    is_in_shopping_cart = serializers.SerializerMethodField()
 
     class Meta:
         model = Recipe
         fields = "__all__"
 
     def update(self, instance, validated_data):
-        instance.tag = validated_data.get("tag", instance.tag)
-        instance.ingredient = validated_data.get(
-            "ingredient", instance.ingredient
+        instance.author = validated_data.get("author", instance.author)
+        instance.title = validated_data.get("title", instance.title)
+        instance.image = validated_data.get("image", instance.image)
+        instance.description = validated_data.get(
+            "description", instance.description
         )
+        instance.time = validated_data.get("time", instance.time)
+        instance.tags.clear()
+        instance.tags = self.initial_data.get("tags")
+        instance.ingredients.clear()
+        instance.ingredients = self.initial_data.get("ingredients")
         instance.save()
         return instance
 
     def create(self, validated_data):
-        tag = validated_data.pop("tag")
-        ingredient = validated_data.pop("ingredient")
+        tags = validated_data.pop("tags")
+        ingredients = validated_data.pop("ingredients")
         recipe = Recipe.objects.create(**validated_data)
-        IngredientRecipe.objects.create(ingredient=ingredient, recipe=recipe)
-        TagRecipe.objects.create(tag=tag, recipe=recipe)
+        for ingredient in ingredients:
+            current_ingredient, status = Ingredient.objects.get_or_create(
+                **ingredient
+            )
+            IngredientRecipe.objects.create(
+                ingredient=current_ingredient, recipe=recipe
+            )
+        for tag in tags:
+            current_tag, status = Tag.objects.get_or_create(**tag)
+            TagRecipe.objects.create(tag=current_tag, recipe=recipe)
         return recipe
+
+    def get_is_in_favorite(self, obj):
+        user = self.context.get("request").user
+        if user.is_anonymous:
+            return False
+        return Favorite.objects.filter(user=user, recipe=obj).exists()
+
+    def get_is_in_shopping_cart(self, obj):
+        user = self.context.get("request").user
+        if user.is_anonymous:
+            return False
+        return ShoppingCart.objects.filter(user=user, recipe=obj).exists()
 
 
 class SubscriptionSerializer(ModelSerializer):
@@ -95,58 +123,6 @@ class SubscriptionSerializer(ModelSerializer):
 
     class Meta:
         model = Subscription
-        fields = "__all__"
-        validators = [
-            UniqueTogetherValidator(
-                queryset=Subscription.objects.all(),
-                fields=["user", "following"],
-            )
-        ]
-
-    def validate_following(self, following):
-        if following == self.context["request"].user:
-            raise serializers.ValidationError("User и Following одинаковы")
-        return following
-
-
-class FavoriteSerializer(ModelSerializer):
-    user = serializers.SlugRelatedField(
-        slug_field="username",
-        read_only=True,
-        default=serializers.CurrentUserDefault(),
-    )
-    following = serializers.SlugRelatedField(
-        slug_field="username", queryset=User.objects.all()
-    )
-
-    class Meta:
-        model = Favorite
-        fields = "__all__"
-        validators = [
-            UniqueTogetherValidator(
-                queryset=Subscription.objects.all(),
-                fields=["user", "following"],
-            )
-        ]
-
-    def validate_following(self, following):
-        if following == self.context["request"].user:
-            raise serializers.ValidationError("User и Following одинаковы")
-        return following
-
-
-class ShoppingCardSerializer(ModelSerializer):
-    user = serializers.SlugRelatedField(
-        slug_field="username",
-        read_only=True,
-        default=serializers.CurrentUserDefault(),
-    )
-    following = serializers.SlugRelatedField(
-        slug_field="username", queryset=User.objects.all()
-    )
-
-    class Meta:
-        model = ShoppingCard
         fields = "__all__"
         validators = [
             UniqueTogetherValidator(

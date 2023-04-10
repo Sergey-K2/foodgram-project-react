@@ -53,12 +53,12 @@ class Recipe(models.Model):
         verbose_name="Картинка", upload_to="recipes/images/"
     )
     description = models.TextField(verbose_name="Описание")
-    ingredient = models.ManyToManyField(
+    ingredients = models.ManyToManyField(
         Ingredient,
         related_name="recipe",
         verbose_name="Ингридиент",
     )
-    tag = models.ManyToManyField(
+    tags = models.ManyToManyField(
         Tag,
         related_name="recipe",
         verbose_name="Тэг",
@@ -121,49 +121,49 @@ class Favorite(models.Model):
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name="follow",
-        verbose_name="Подписчик",
-    )
-    Recipe = models.ForeignKey(
-        Recipe,
-        on_delete=models.CASCADE,
-        related_name="follow",
-        verbose_name="Автор",
-    )
-    added = models.DateTimeField("Дата и время публикации", auto_now_add=True)
-
-    class Meta:
-        verbose_name = "Подписка"
-        verbose_name_plural = "Подписки"
-
-    def __str__(self):
-        return (
-            f"Подписка пользователя {self.user.username}"
-            f" на автора {self.author.username}"
-        )
-
-
-class ShoppingCard(models.Model):
-    user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name="foll",
-        verbose_name="Подписчик",
+        related_name="favorites",
+        verbose_name="Пользователь",
     )
     recipe = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,
-        related_name="foll",
-        verbose_name="Автор",
+        related_name="users favorites",
+        verbose_name="Рецепт",
     )
     added = models.DateTimeField("Дата и время публикации", auto_now_add=True)
 
     class Meta:
-        verbose_name = "Подписка"
-        verbose_name_plural = "Подписки"
+        verbose_name = "Рецепт в избранном"
+        verbose_name_plural = "Рецепты в избранном"
 
     def __str__(self):
         return (
-            f"Подписка пользователя {self.user.username}"
-            f" на автора {self.author.username}"
+            f"Рецепт {self.recipe} в списке избранного"
+            f"пользователя {self.user.username}."
+        )
+
+
+class ShoppingCart(models.Model):
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="added_to_cart",
+        verbose_name="Пользователь",
+    )
+    recipe = models.ForeignKey(
+        Recipe,
+        on_delete=models.CASCADE,
+        related_name="in_users shopping_carts",
+        verbose_name="Рецепт в списке покупок",
+    )
+    added = models.DateTimeField("Дата и время публикации", auto_now_add=True)
+
+    class Meta:
+        verbose_name = "Рецепт в списке покупок"
+        verbose_name_plural = "Рецепты в списке покупок"
+
+    def __str__(self):
+        return (
+            f"Рецепт {self.recipe} в корзине"
+            f"пользователя {self.user.username}."
         )
