@@ -1,6 +1,7 @@
 import base64
 
 from django.core.files.base import ContentFile
+from django.conf import settings
 from rest_framework import serializers
 from rest_framework.validators import UniqueTogetherValidator
 from rest_framework.serializers import ModelSerializer
@@ -40,7 +41,10 @@ class IngredientSerializer(ModelSerializer):
         fields = "__all__"
 
     def validate_amount(self, amount):
-        if amount not in range(0, 32768):
+        if (
+            amount < settings.INGREDIENT_LOWER_LIMIT
+            or amount > settings.INGREDIENT_UPPER_LIMIT
+        ):
             return (
                 "Количество ингредиента должно быть в интервале от 0 до 32767"
             )
@@ -86,16 +90,21 @@ class RecipeSerializer(ModelSerializer):
         tags = validated_data.pop("tags")
         ingredients = validated_data.pop("ingredients")
         recipe = Recipe.objects.create(**validated_data)
-        for ingredient in ingredients:
-            current_ingredient, status = Ingredient.objects.get_or_create(
-                **ingredient
-            )
-            IngredientRecipe.objects.create(
-                ingredient=current_ingredient, recipe=recipe
-            )
-        for tag in tags:
-            current_tag, status = Tag.objects.get_or_create(**tag)
-            TagRecipe.objects.create(tag=current_tag, recipe=recipe)
+        Recipe.objects.create(**validated_data)
+        recipe.tags.set(tags)
+        IngredientRecipe.objects.bulk_create(
+            [
+                IngredientRecipe(
+                    ingredient=ingredients.get("id"),
+                    recipe=recipe,
+                    amount=ingredients.get("amount"),
+                    unit=ingredients.get("unit"),
+                )
+                for ingredient in ingredients
+            ],
+            batch_size=999,
+        )
+        recipe.save()
         return recipe
 
     def get_is_in_favorite(self, obj):

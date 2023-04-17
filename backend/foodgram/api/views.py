@@ -14,7 +14,6 @@ from rest_framework.viewsets import (
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.permissions import (
     IsAuthenticated,
-    IsAuthenticatedOrReadOnly,
 )
 
 from .permissions import AuthenticatedOrAuthorOrReadOnly
@@ -62,7 +61,11 @@ class RecipeViewSet(ModelViewSet):
     permission_classes = (AuthenticatedOrAuthorOrReadOnly,)
     pagination_class = LimitOffsetPagination
 
-    @action(detail=True, methods=["post", "delete"])
+    @action(
+        detail=True,
+        methods=["post", "delete"],
+        permission_classes=(IsAuthenticated,),
+    )
     def favorite(self, request, pk=None):
         user = self.request.user
         recipe = get_object_or_404(Recipe, pk=pk)
@@ -85,7 +88,11 @@ class RecipeViewSet(ModelViewSet):
             )
             return Response(serializer.data)
 
-    @action(detail=True, methods=["post", "delete"])
+    @action(
+        detail=True,
+        methods=["post", "delete"],
+        permission_classes=(IsAuthenticated,),
+    )
     def shopping_cart(self, request, pk=None):
         user = self.request.user
         recipe = get_object_or_404(Recipe, pk=pk)
@@ -111,7 +118,9 @@ class RecipeViewSet(ModelViewSet):
             )
             return Response(serializer.data)
 
-    @action(detail=True, methods=["get"])
+    @action(
+        detail=True, methods=["get"], permission_classes=(IsAuthenticated,)
+    )
     def download_shopping_cart(self, request):
         shopping_cart = ShoppingCart.objects.filter(user=self.request.user)
         recipes = [element.recipe.id for element in shopping_cart]
