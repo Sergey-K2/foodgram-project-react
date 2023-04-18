@@ -7,18 +7,11 @@ from rest_framework.decorators import action
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from rest_framework.viewsets import (
-    GenericViewSet,
-    ModelViewSet,
-)
+from rest_framework.viewsets import GenericViewSet, ModelViewSet
 
 from .permissions import AuthenticatedOrAuthorOrReadOnly
-from .serializers import (
-    IngredientSerializer,
-    RecipeSerializer,
-    SubscriptionSerializer,
-    TagSerializer,
-)
+from .serializers import (IngredientSerializer, RecipeSerializer,
+                          SubscriptionSerializer, TagSerializer)
 
 
 class ListRetrieveViewSet(
