@@ -1,16 +1,15 @@
 import base64
 
-from django.core.files.base import ContentFile
 from django.conf import settings
+from django.core.files.base import ContentFile
 from rest_framework import serializers
-from rest_framework.validators import UniqueTogetherValidator
 from rest_framework.serializers import ModelSerializer
+from rest_framework.validators import UniqueTogetherValidator
 
 from recipes.models import (
     Ingredient,
     IngredientRecipe,
     Tag,
-    TagRecipe,
     Recipe,
     Subscription,
     User,

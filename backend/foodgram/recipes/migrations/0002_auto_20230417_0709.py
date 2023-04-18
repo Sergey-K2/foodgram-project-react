@@ -9,56 +9,94 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('recipes', '0001_initial'),
+        ("recipes", "0001_initial"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='ShoppingCart',
+            name="ShoppingCart",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('added', models.DateTimeField(auto_now_add=True, verbose_name='Дата и время публикации')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "added",
+                    models.DateTimeField(
+                        auto_now_add=True,
+                        verbose_name="Дата и время публикации",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Рецепт в списке покупок',
-                'verbose_name_plural': 'Рецепты в списке покупок',
+                "verbose_name": "Рецепт в списке покупок",
+                "verbose_name_plural": "Рецепты в списке покупок",
             },
         ),
         migrations.AlterModelOptions(
-            name='favorite',
-            options={'verbose_name': 'Рецепт в избранном', 'verbose_name_plural': 'Рецепты в избранном'},
+            name="favorite",
+            options={
+                "verbose_name": "Рецепт в избранном",
+                "verbose_name_plural": "Рецепты в избранном",
+            },
         ),
         migrations.RenameField(
-            model_name='recipe',
-            old_name='tag',
-            new_name='tags',
+            model_name="recipe",
+            old_name="tag",
+            new_name="tags",
         ),
         migrations.RemoveField(
-            model_name='favorite',
-            name='Recipe',
+            model_name="favorite",
+            name="Recipe",
         ),
         migrations.AddField(
-            model_name='favorite',
-            name='recipe',
-            field=models.ForeignKey(default=1, on_delete=django.db.models.deletion.CASCADE, related_name='users_favorites', to='recipes.recipe', verbose_name='Рецепт'),
+            model_name="favorite",
+            name="recipe",
+            field=models.ForeignKey(
+                default=1,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="users_favorites",
+                to="recipes.recipe",
+                verbose_name="Рецепт",
+            ),
             preserve_default=False,
         ),
         migrations.AlterField(
-            model_name='favorite',
-            name='user',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='favorites', to=settings.AUTH_USER_MODEL, verbose_name='Пользователь'),
+            model_name="favorite",
+            name="user",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="favorites",
+                to=settings.AUTH_USER_MODEL,
+                verbose_name="Пользователь",
+            ),
         ),
         migrations.DeleteModel(
-            name='ShoppingCard',
+            name="ShoppingCard",
         ),
         migrations.AddField(
-            model_name='shoppingcart',
-            name='recipe',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='in_users_shopping_carts', to='recipes.recipe', verbose_name='Рецепт в списке покупок'),
+            model_name="shoppingcart",
+            name="recipe",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="in_users_shopping_carts",
+                to="recipes.recipe",
+                verbose_name="Рецепт в списке покупок",
+            ),
         ),
         migrations.AddField(
-            model_name='shoppingcart',
-            name='user',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='added_to_cart', to=settings.AUTH_USER_MODEL, verbose_name='Пользователь'),
+            model_name="shoppingcart",
+            name="user",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="added_to_cart",
+                to=settings.AUTH_USER_MODEL,
+                verbose_name="Пользователь",
+            ),
         ),
     ]
