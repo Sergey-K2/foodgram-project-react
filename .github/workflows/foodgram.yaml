@@ -68,7 +68,8 @@ jobs:
           script: |
             sudo docker-compose stop
             sudo docker-compose rm web
-            sudo docker pull sergekzv/api_yamdb:v1.2
+            sudo docker pull sergekzv/foodgram:latest
+            sudo docker pull sergekzv/foodgram_front:latest
             touch .env
             echo DB_ENGINE=${{ secrets.DB_ENGINE }} >> .env
             echo DB_NAME=${{ secrets.DB_NAME }} >> .env
