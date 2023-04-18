@@ -11,6 +11,9 @@ Django 2.2
 Django REST Framework
 Библиотеки Djoser и Simple JWT
 
+## Статус workflow
+![Status of api_yamdb project workflow](https://github.com/Sergey-K2/foodgram-project-react/actions/workflows/foodgram.yaml/badge.svg?event=push)
+
 
 
 ## Автор:
