@@ -1,6 +1,9 @@
 import os
 from datetime import timedelta
+from dotenv import load_dotenv
 from pathlib import Path
+
+load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -67,7 +70,7 @@ DATABASES = {
         "NAME": os.getenv("DB_NAME", default="postgres"),
         "USER": os.getenv("POSTGRES_USER", default="postgres"),
         "PASSWORD": os.getenv("POSTGRES_PASSWORD", default="post_db_pasw"),
-        "HOST": os.getenv("DB_HOST", default="db"),
+        "HOST": os.getenv("DB_HOST", default="127.0.0.1"),
         "PORT": os.getenv("DB_PORT", default=5432),
     }
 }
