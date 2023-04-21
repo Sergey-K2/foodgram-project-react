@@ -10,7 +10,7 @@ RUN apt-get update -y \
 
 RUN pip3 install -r /app/requirements.txt --no-cache-dir
 
-COPY . /app
+COPY backend/foodgram/ /app
 
 WORKDIR /app
 
