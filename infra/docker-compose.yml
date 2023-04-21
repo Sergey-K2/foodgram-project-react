@@ -7,8 +7,7 @@ services:
     env_file:
       - ./.env
   web:
-    build: 
-      context: sergekzv/foodgram:latest
+    image: sergekzv/foodgram:latest
     restart: always
     volumes:
       - static_value:/app/static/
@@ -19,8 +18,7 @@ services:
     env_file:
       - ./.env
   frontend:
-    build:
-      context: sergekzv/foodgram_front:latest
+    image: sergekzv/foodgram_front:latest
     volumes:
       - ../frontend/:/app/result_build/
   nginx:
