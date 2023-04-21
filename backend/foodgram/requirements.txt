@@ -4,9 +4,9 @@ coreapi==2.3.3
 coreschema==0.0.4
 cryptography==39.0.2
 defusedxml==0.7.1
-Django==3.2.18
+Django==2.2.16
 django-templated-mail==1.1.1
-djangorestframework==3.14.0
+djangorestframework==3.12.4
 djangorestframework-simplejwt==4.7.2
 djoser==2.1.0
 idna==3.4
@@ -35,3 +35,4 @@ psycopg2-binary==2.9.5
 whitenoise
 python-dotenv
 chardet==4.0.0 
+django-filter==2.4.0
