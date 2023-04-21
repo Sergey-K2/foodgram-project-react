@@ -9,7 +9,6 @@ services:
   web:
     build: 
       context: sergekzv/foodgram:latest
-      dockerfile: Dockerfile
     restart: always
     volumes:
       - static_value:/app/static/
@@ -22,7 +21,6 @@ services:
   frontend:
     build:
       context: sergekzv/foodgram_front:latest
-      dockerfile: Dockerfile
     volumes:
       - ../frontend/:/app/result_build/
   nginx:

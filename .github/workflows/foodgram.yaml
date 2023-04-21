@@ -67,6 +67,7 @@ jobs:
           script: |
             sudo docker-compose stop
             sudo docker-compose rm web
+            sudo docker-compose rm frontend
             sudo docker pull sergekzv/foodgram:latest
             sudo docker pull sergekzv/foodgram_front:latest
             touch .env
