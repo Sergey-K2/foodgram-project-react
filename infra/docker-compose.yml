@@ -15,7 +15,9 @@ services:
       - media_value:/app/media/
       
     depends_on:
-      - backend
+      - db
+    env_file:
+      - ./.env
 
   frontend:
     image: sergekzv/foodgram_front:latest
@@ -23,9 +25,7 @@ services:
       - ../frontend/:/app/result_build/
 
     depends_on:
-      - db
-    env_file:
-      - ./.env
+      - backend
 
   nginx:
     image: nginx:1.19.3
