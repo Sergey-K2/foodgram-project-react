@@ -6,7 +6,8 @@ services:
       - db:/var/lib/postgresql/data/
     env_file:
       - ./.env
-  web:
+
+  backend:
     image: sergekzv/foodgram:latest
     restart: always
     volumes:
@@ -17,10 +18,17 @@ services:
       - db
     env_file:
       - ./.env
+
   frontend:
     image: sergekzv/foodgram_front:latest
     volumes:
       - ../frontend/:/app/result_build/
+
+    depends_on:
+      - db
+    env_file:
+      - ./.env
+
   nginx:
     image: nginx:1.19.3
     ports:
