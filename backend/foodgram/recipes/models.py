@@ -28,7 +28,6 @@ class Ingredient(models.Model):
     title = models.CharField(
         verbose_name="Название", unique=True, max_length=100
     )
-    amount = models.PositiveSmallIntegerField(verbose_name="Количество")
     unit = models.CharField(
         verbose_name="Единицы измерения",
         choices=CHOICES_UNITS_OF_MEASUREMENT,
@@ -83,6 +82,7 @@ class TagRecipe(models.Model):
 class IngredientRecipe(models.Model):
     ingredient = models.ForeignKey(Ingredient, on_delete=models.CASCADE)
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)
+    amount = models.PositiveSmallIntegerField(verbose_name="Количество")
 
 
 class Subscription(models.Model):
