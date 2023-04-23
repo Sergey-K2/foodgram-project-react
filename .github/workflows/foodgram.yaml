@@ -78,10 +78,10 @@ jobs:
             echo DB_HOST=${{ secrets.DB_HOST }} >> .env
             echo DB_PORT=${{ secrets.DB_PORT }} >> .env
             sudo docker-compose up -d --build
-            sudo docker-compose exec -T backend python backend/manage.py makemigrations
-            sudo docker-compose exec -T backend python backend/manage.py migrate
-            sudo docker-compose exec -T backend python backend/manage.py collectstatic --no-input
-            sudo docker-compose exec -T backend python backend/manage.py load_csv
+            sudo docker-compose exec -T backend python backend/foodgram/manage.py makemigrations
+            sudo docker-compose exec -T backend python backend/foodgram/manage.py migrate
+            sudo docker-compose exec -T backend python backend/foodgram/manage.py collectstatic --no-input
+            sudo docker-compose exec -T backend python backend/foodgram/manage.py load_csv
 
 
   send_message:
