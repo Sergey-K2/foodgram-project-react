@@ -82,7 +82,9 @@ class TagRecipe(models.Model):
 class IngredientRecipe(models.Model):
     ingredient = models.ForeignKey(Ingredient, on_delete=models.CASCADE)
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)
-    amount = models.PositiveSmallIntegerField(verbose_name="Количество")
+    amount = models.PositiveSmallIntegerField(
+        verbose_name="Количество", default="have your default amount id here"
+    )
 
 
 class Subscription(models.Model):
