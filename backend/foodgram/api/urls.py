@@ -1,8 +1,13 @@
+from django.contrib import admin
 from django.urls import include, path
 from rest_framework.routers import DefaultRouter
 
-from .views import (IngredientViewSet, RecipeViewSet, SubscriptionViewSet,
-                    TagViewSet)
+from .views import (
+    IngredientViewSet,
+    RecipeViewSet,
+    SubscriptionViewSet,
+    TagViewSet,
+)
 
 app_name = "api"
 
@@ -18,5 +23,5 @@ v1_router.register(
 urlpatterns = [
     path("api/", include(v1_router.urls)),
     path("api/auth/", include("djoser.urls")),
-    path("v1/", include("djoser.urls.jwt")),
+    path("admin/", admin.site.urls),
 ]
