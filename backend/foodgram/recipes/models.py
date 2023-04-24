@@ -18,17 +18,9 @@ class Tag(models.Model):
 
 
 class Ingredient(models.Model):
-    CHOICES_UNITS_OF_MEASUREMENT = (
-        ("Кг", "Килограмм"),
-        ("Гр", "Грамм"),
-        ("Мг", "Миллиграм"),
-        ("Шт", "Штук"),
-    )
-
     title = models.CharField(verbose_name="Название", max_length=100)
     unit = models.CharField(
         verbose_name="Единицы измерения",
-        choices=CHOICES_UNITS_OF_MEASUREMENT,
         max_length=100,
     )
 
