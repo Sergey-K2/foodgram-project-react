@@ -83,8 +83,8 @@ class TagRecipe(models.Model):
 
 
 class IngredientRecipe(models.Model):
-    ingredient = models.ForeignKey(Ingredient, on_delete=models.PROTECT)
-    recipe = models.ForeignKey(Recipe, on_delete=models.PROTECT)
+    ingredient = models.ForeignKey(Ingredient, on_delete=models.CASCADE)
+    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)
     amount = models.PositiveSmallIntegerField(
         verbose_name="Количество", null=True
     )
