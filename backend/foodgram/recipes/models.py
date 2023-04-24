@@ -34,11 +34,6 @@ class Ingredient(models.Model):
 
     class Meta:
         ordering = ("-title",)
-        constraints = (
-            models.UniqueConstraint(
-                fields=("title", "unit"), name="unique_ingredient"
-            ),
-        )
 
 
 class Recipe(models.Model):
@@ -84,11 +79,19 @@ class TagRecipe(models.Model):
 
 
 class IngredientRecipe(models.Model):
-    ingredient = models.ForeignKey(Ingredient, on_delete=models.CASCADE)
-    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)
+    ingredient = models.ForeignKey(Ingredient, on_delete=models.PROTECT)
+    recipe = models.ForeignKey(Recipe, on_delete=models.PROTECT)
     amount = models.PositiveSmallIntegerField(
         verbose_name="Количество", null=True
     )
+
+    class Meta:
+        constraints = (
+            models.UniqueConstraint(
+                fields=("ingredient", "recipe"),
+                name="unique_ingredient_recipe",
+            ),
+        )
 
 
 class Subscription(models.Model):
