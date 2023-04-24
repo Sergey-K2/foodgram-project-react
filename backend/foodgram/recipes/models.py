@@ -34,6 +34,12 @@ class Ingredient(models.Model):
 
     class Meta:
         ordering = ("-title",)
+        constraints = (
+            models.UniqueConstraint(
+                fields=("title", "unit"),
+                name="unique_ingredient_recipe",
+            ),
+        )
 
 
 class Recipe(models.Model):
@@ -84,17 +90,6 @@ class IngredientRecipe(models.Model):
     amount = models.PositiveSmallIntegerField(
         verbose_name="Количество", null=True
     )
-
-    class Meta:
-        ordering = ("-id",)
-        constraints = (
-            models.UniqueConstraint(
-                fields=("ingredient", "recipe"),
-                name="unique_ingredient_recipe",
-            ),
-        )
-
-        db_table = "recipes_recipe_ingredient"
 
 
 class Subscription(models.Model):
