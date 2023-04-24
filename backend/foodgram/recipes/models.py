@@ -86,12 +86,15 @@ class IngredientRecipe(models.Model):
     )
 
     class Meta:
+        ordering = "-id"
         constraints = (
             models.UniqueConstraint(
                 fields=("ingredient", "recipe"),
                 name="unique_ingredient_recipe",
             ),
         )
+
+        db_table = "recipes_recipe_ingredient"
 
 
 class Subscription(models.Model):
