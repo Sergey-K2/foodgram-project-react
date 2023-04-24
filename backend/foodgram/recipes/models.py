@@ -56,6 +56,7 @@ class Recipe(models.Model):
     description = models.TextField(verbose_name="Описание")
     ingredient = models.ManyToManyField(
         Ingredient,
+        through="IngredientRecipe",
         related_name="recipe",
         verbose_name="Ингридиент",
     )
