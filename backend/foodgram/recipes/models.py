@@ -34,7 +34,7 @@ class Ingredient(models.Model):
 
     class Meta:
         ordering = ("-title",)
-        unique_together = ("title", "name")
+        unique_together = ("title", "unit")
 
 
 class Recipe(models.Model):
