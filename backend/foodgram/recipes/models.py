@@ -34,6 +34,11 @@ class Ingredient(models.Model):
 
     class Meta:
         ordering = ("-title",)
+        constraints = (
+            models.UniqueConstraint(
+                fields=("title", "unit"), name="unique_ingredient"
+            ),
+        )
 
 
 class Recipe(models.Model):
