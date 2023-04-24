@@ -86,7 +86,7 @@ class IngredientRecipe(models.Model):
     )
 
     class Meta:
-        ordering = "-id"
+        ordering = ("-id",)
         constraints = (
             models.UniqueConstraint(
                 fields=("ingredient", "recipe"),
