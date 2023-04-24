@@ -66,7 +66,7 @@ class Recipe(models.Model):
     tags = models.ManyToManyField(
         Tag,
         related_name="recipe",
-        verbose_name="Тэг",
+        verbose_name="Тег",
     )
     time = models.PositiveSmallIntegerField(verbose_name="Время приготовления")
     is_in_favorite = models.BooleanField(verbose_name="В избранном?")
