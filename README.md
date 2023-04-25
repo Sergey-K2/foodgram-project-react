@@ -20,7 +20,7 @@ Django REST Framework
 
 
 ## Автор:
-Козлов Сергей /n
-Telegram: @SergeKzv /n
-e-mail: serand.kozlov@gmail.com /n
+Козлов Сергей 
+Telegram: @SergeKzv 
+e-mail: serand.kozlov@gmail.com
 
