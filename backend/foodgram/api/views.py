@@ -1,7 +1,16 @@
 from django.db.models import Sum
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
-from recipes.models import Favorite, Ingredient, Recipe, ShoppingCart, Tag
+from djoser.views import UserViewSet
+from recipes.models import (
+    Favorite,
+    Ingredient,
+    Recipe,
+    ShoppingCart,
+    Subscription,
+    Tag,
+    User,
+)
 from rest_framework import exceptions, filters, mixins
 from rest_framework.decorators import action
 from rest_framework.pagination import LimitOffsetPagination
@@ -10,8 +19,12 @@ from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet, ModelViewSet
 
 from .permissions import AuthenticatedOrAuthorOrReadOnly
-from .serializers import (IngredientSerializer, RecipeSerializer,
-                          SubscriptionSerializer, TagSerializer)
+from .serializers import (
+    IngredientSerializer,
+    RecipeSerializer,
+    SubscriptionSerializer,
+    TagSerializer,
+)
 
 
 class ListRetrieveViewSet(
@@ -132,15 +145,50 @@ class IngredientViewSet(ListRetrieveViewSet):
     serializer_class = IngredientSerializer
 
 
-class SubscriptionViewSet(ListCreateDestroyViewSet):
+class UsersSubscriptionViewSet(UserViewSet):
     serializer_class = SubscriptionSerializer
     permission_classes = (IsAuthenticated,)
     filter_backends = (filters.SearchFilter,)
     search_fields = ("following__username", "user__username")
     pagination_class = LimitOffsetPagination
 
-    def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+    @action(
+        detail=False,
+        methods=["get"],
+    )
+    def subscriptions(self, request):
+        user = self.request.user
+        queryset = User.objects.filter(following__user=user)
+        pages = self.paginate_queryset(queryset)
+        serializer = SubscriptionSerializer(
+            pages, many=True, context={"request": request}
+        )
+        return self.get_paginated_response(serializer.data)
 
-    def get_queryset(self):
-        return self.request.user.follower.all()
+    @action(
+        detail=True,
+        methods=("post", "delete"),
+    )
+    def subscribe(self, request, pk=None):
+        user = self.request.user
+        author = get_object_or_404(User, pk=pk)
+
+        if self.request.method == "POST":
+            if Subscription.objects.filter(user=user, author=author).exists():
+                raise exceptions.ValidationError("Подписка уже оформлена.")
+
+            Subscription.objects.create(user=user, author=author)
+            serializer = self.get_serializer(author)
+
+            return Response(serializer.data)
+
+        if self.request.method == "DELETE":
+            if not Subscription.objects.filter(
+                user=user, author=author
+            ).exists():
+                raise exceptions.ValidationError("Подписки не существует")
+            subscription = get_object_or_404(
+                Subscription, user=user, author=author
+            )
+            subscription.delete()
+            return Response()
