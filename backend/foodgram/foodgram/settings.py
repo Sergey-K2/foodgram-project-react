@@ -28,7 +28,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "rest_framework",
-    "rest_framework_simplejwt",
+    "rest_framework.authtoken",
     "django_filters",
     "djoser",
     "api",
@@ -149,6 +149,11 @@ DJOSER = {
     "SERIALIZERS": {
         "user_create": "api.serializers.CustomUserCreateSerializer",
         "user": "api.serializers.CustomUserSerializer",
+        "user_create": "api.serializers.CustomUserCreateSerializer",
     },
     "USER_ID_FIELD": "id",
+    "PERMISSIONS": {
+        "user": ("rest_framework.permissions.IsAuthenticatedOrReadOnly",),
+    },
+    "HIDE_USERS": False,
 }

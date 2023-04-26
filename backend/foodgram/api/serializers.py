@@ -3,8 +3,16 @@ import base64
 from django.conf import settings
 from django.core.files.base import ContentFile
 from djoser.serializers import UserCreateSerializer, UserSerializer
-from recipes.models import (Favorite, Ingredient, IngredientRecipe, Recipe,
-                            ShoppingCart, Subscription, Tag, User)
+from recipes.models import (
+    Favorite,
+    Ingredient,
+    IngredientRecipe,
+    Recipe,
+    ShoppingCart,
+    Subscription,
+    Tag,
+    User,
+)
 from rest_framework import serializers
 from rest_framework.serializers import ModelSerializer
 from rest_framework.validators import UniqueTogetherValidator
@@ -171,3 +179,12 @@ class CustomUserSerializer(UserSerializer):
         return Subscription.objects.filter(
             user=self.context["request"].user, author=obj
         ).exists()
+
+
+class CurrentUserDefaultId(object):
+    requires_context = True
+
+    def __call__(self, serializer_instance=None):
+        if serializer_instance is not None:
+            self.user_id = serializer_instance.context["request"].user.id
+            return self.user_id
