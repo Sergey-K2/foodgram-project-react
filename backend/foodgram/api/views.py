@@ -12,8 +12,9 @@ from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet, ModelViewSet
 
 from .permissions import AuthenticatedOrAuthorOrReadOnly
-from .serializers import (IngredientSerializer, RecipeSerializer,
-                          SubscriptionSerializer, TagSerializer)
+from .serializers import (CreateUpdateRecipeSerializer, IngredientSerializer,
+                          RecipeSerializer, SubscriptionSerializer,
+                          TagSerializer)
 
 
 class ListRetrieveViewSet(
@@ -42,6 +43,12 @@ class RecipeViewSet(ModelViewSet):
     serializer_class = RecipeSerializer
     permission_classes = (AuthenticatedOrAuthorOrReadOnly,)
     pagination_class = LimitOffsetPagination
+
+    def get_serializer_class(self):
+        if self.action in ("create", "partial_update"):
+            return CreateUpdateRecipeSerializer
+
+        return RecipeSerializer
 
     @action(
         detail=True,
