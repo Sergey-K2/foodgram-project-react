@@ -144,7 +144,7 @@ class CurrentUserDefaultId(object):
 
 
 class IngredientRecipeSerializer(ModelSerializer):
-    id = serializers.SerializerMethodField(method_name="get_id")
+    id = serializers.PrimaryKeyRelatedField(queryset=Ingredient.objects.all)
     title = serializers.SerializerMethodField(method_name="get_title")
     unit = serializers.SerializerMethodField(method_name="get_unit")
 
