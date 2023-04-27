@@ -4,8 +4,16 @@ from django.conf import settings
 from django.core.files.base import ContentFile
 from django.core.validators import MinValueValidator
 from djoser.serializers import UserCreateSerializer, UserSerializer
-from recipes.models import (Favorite, Ingredient, IngredientRecipe, Recipe,
-                            ShoppingCart, Subscription, Tag, User)
+from recipes.models import (
+    Favorite,
+    Ingredient,
+    IngredientRecipe,
+    Recipe,
+    ShoppingCart,
+    Subscription,
+    Tag,
+    User,
+)
 from rest_framework import serializers
 from rest_framework.serializers import ModelSerializer
 from rest_framework.validators import UniqueTogetherValidator
@@ -212,3 +220,18 @@ class CreateUpdateRecipeSerializer(ModelSerializer):
         )
         recipe.save()
         return recipe
+
+
+class CreateUpdateIngredientRecipeSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField()
+    amount = serializers.IntegerField(
+        validators=(
+            MinValueValidator(
+                1, message="Минимальное количество ингредиентов = 1"
+            ),
+        )
+    )
+
+    class Meta:
+        model = Ingredient
+        fields = ("id", "amount")

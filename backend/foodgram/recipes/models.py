@@ -48,7 +48,7 @@ class Recipe(models.Model):
     image = models.ImageField(
         verbose_name="Картинка", upload_to="recipes/images/"
     )
-    description = models.TextField(verbose_name="Описание")
+    description = models.TextField(verbose_name="Описание", help_text="Описание рецепта")
     ingredient = models.ManyToManyField(
         Ingredient,
         through="IngredientRecipe",
@@ -57,12 +57,12 @@ class Recipe(models.Model):
     )
     tags = models.ManyToManyField(
         Tag,
+        through = "TagRecipe",
         related_name="recipe",
         verbose_name="Тег",
     )
     time = models.PositiveSmallIntegerField(verbose_name="Время приготовления")
-    is_in_favorite = models.BooleanField(verbose_name="В избранном?")
-    is_in_shopping_cart = models.BooleanField(verbose_name="В списке покупок?")
+
 
     class Meta:
         ordering = ("-pub_date",)
@@ -80,7 +80,7 @@ class TagRecipe(models.Model):
 
 class IngredientRecipe(models.Model):
     ingredient = models.ForeignKey(Ingredient, on_delete=models.PROTECT)
-    recipe = models.ForeignKey(Recipe, on_delete=models.PROTECT)
+    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)
     amount = models.PositiveSmallIntegerField(
         verbose_name="Количество", null=True
     )
