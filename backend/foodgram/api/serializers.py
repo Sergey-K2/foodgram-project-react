@@ -42,7 +42,12 @@ class IngredientSerializer(ModelSerializer):
 class TagSerializer(ModelSerializer):
     class Meta:
         model = Tag
-        fields = "__all__"
+        fields = (
+            "id",
+            "title",
+            "color",
+            "slug",
+        )
 
 
 class RecipeSerializer(ModelSerializer):
@@ -144,7 +149,7 @@ class CurrentUserDefaultId(object):
 
 
 class IngredientRecipeSerializer(ModelSerializer):
-    id = serializers.PrimaryKeyRelatedField(queryset=Ingredient.objects.all)
+    id = serializers.SerializerMethodField(method_name="get_id")
     title = serializers.SerializerMethodField(method_name="get_title")
     unit = serializers.SerializerMethodField(method_name="get_unit")
 
