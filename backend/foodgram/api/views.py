@@ -1,9 +1,18 @@
 from django.db.models import Sum
+from django_filters.rest_framework import DjangoFilterBackend
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from djoser.views import UserViewSet
-from recipes.models import (Favorite, Ingredient, IngredientRecipe, Recipe,
-                            ShoppingCart, Subscription, Tag, User)
+from recipes.models import (
+    Favorite,
+    Ingredient,
+    IngredientRecipe,
+    Recipe,
+    ShoppingCart,
+    Subscription,
+    Tag,
+    User,
+)
 from rest_framework import exceptions, filters, mixins
 from rest_framework.decorators import action
 from rest_framework.pagination import LimitOffsetPagination
@@ -12,9 +21,13 @@ from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet, ModelViewSet
 
 from .permissions import AuthenticatedOrAuthorOrReadOnly
-from .serializers import (CreateUpdateRecipeSerializer, IngredientSerializer,
-                          RecipeSerializer, SubscriptionSerializer,
-                          TagSerializer)
+from .serializers import (
+    CreateUpdateRecipeSerializer,
+    IngredientSerializer,
+    RecipeSerializer,
+    SubscriptionSerializer,
+    TagSerializer,
+)
 
 
 class ListRetrieveViewSet(
@@ -143,7 +156,7 @@ class IngredientViewSet(ListRetrieveViewSet):
     serializer_class = IngredientSerializer
     permission_classes = (AllowAny,)
     pagination_class = None
-    filter_backends = (filters.DjangoFilterBackend,)
+    filter_backends = (DjangoFilterBackend,)
 
 
 class UsersSubscriptionViewSet(UserViewSet):
