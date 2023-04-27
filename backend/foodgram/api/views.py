@@ -3,8 +3,16 @@ from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from djoser.views import UserViewSet
-from recipes.models import (Favorite, Ingredient, IngredientRecipe, Recipe,
-                            ShoppingCart, Subscription, Tag, User)
+from recipes.models import (
+    Favorite,
+    Ingredient,
+    IngredientRecipe,
+    Recipe,
+    ShoppingCart,
+    Subscription,
+    Tag,
+    User,
+)
 from rest_framework import exceptions, filters, mixins
 from rest_framework.decorators import action
 from rest_framework.pagination import LimitOffsetPagination
@@ -13,9 +21,13 @@ from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet, ModelViewSet
 
 from .permissions import AuthenticatedOrAuthorOrReadOnly
-from .serializers import (CreateUpdateRecipeSerializer, IngredientSerializer,
-                          RecipeSerializer, SubscriptionSerializer,
-                          TagSerializer)
+from .serializers import (
+    CreateUpdateRecipeSerializer,
+    IngredientSerializer,
+    RecipeSerializer,
+    SubscriptionSerializer,
+    TagSerializer,
+)
 
 
 class ListRetrieveViewSet(
@@ -145,8 +157,7 @@ class IngredientViewSet(ListRetrieveViewSet):
     permission_classes = (AllowAny,)
     pagination_class = None
     filter_backends = (DjangoFilterBackend, filters.SearchFilter)
-    filterset_fields = ("^title",)
-    http_method_names = ["get"]
+    search_fields = ("^title",)
 
 
 class UsersSubscriptionViewSet(UserViewSet):

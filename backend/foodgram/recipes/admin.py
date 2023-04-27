@@ -11,7 +11,7 @@ class RecipeAdmin(admin.ModelAdmin):
 class TagAdmin(admin.ModelAdmin):
     list_display = ("id", "title", "color", "slug")
     search_fields = ("title",)
-    prepopulated_fields = {"slug": ("title",)}
+    prepopulated_fields = {"slug": ("name",)}
 
 
 class IngredientAdmin(admin.ModelAdmin):
