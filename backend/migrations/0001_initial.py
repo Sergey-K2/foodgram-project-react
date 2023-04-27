@@ -34,9 +34,7 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "amount",
-                    models.PositiveSmallIntegerField(
-                        verbose_name="Количество"
-                    ),
+                    models.PositiveSmallIntegerField(verbose_name="Количество"),
                 ),
                 (
                     "unit",
@@ -143,9 +141,7 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "slug",
-                    models.SlugField(
-                        unique=True, verbose_name="Идентификатор тэга"
-                    ),
+                    models.SlugField(unique=True, verbose_name="Идентификатор тэга"),
                 ),
                 ("color", models.CharField(max_length=6, unique=True)),
             ],

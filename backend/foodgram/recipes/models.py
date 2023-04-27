@@ -5,9 +5,7 @@ User = get_user_model()
 
 
 class Tag(models.Model):
-    title = models.CharField(
-        verbose_name="Название", unique=True, max_length=100
-    )
+    title = models.CharField(verbose_name="Название", unique=True, max_length=100)
     slug = models.SlugField(verbose_name="Идентификатор тэга", unique=True)
     color = models.CharField(max_length=6, unique=True)
 
@@ -45,10 +43,10 @@ class Recipe(models.Model):
     )
     pub_date = models.DateTimeField("Дата публикации", auto_now_add=True)
     title = models.CharField(verbose_name="Название", max_length=200)
-    image = models.ImageField(
-        verbose_name="Картинка", upload_to="recipes/images/"
+    image = models.ImageField(verbose_name="Картинка", upload_to="recipes/images/")
+    description = models.TextField(
+        verbose_name="Описание", help_text="Описание рецепта"
     )
-    description = models.TextField(verbose_name="Описание", help_text="Описание рецепта")
     ingredient = models.ManyToManyField(
         Ingredient,
         through="IngredientRecipe",
@@ -57,12 +55,11 @@ class Recipe(models.Model):
     )
     tags = models.ManyToManyField(
         Tag,
-        through = "TagRecipe",
+        through="TagRecipe",
         related_name="recipe",
         verbose_name="Тег",
     )
     time = models.PositiveSmallIntegerField(verbose_name="Время приготовления")
-
 
     class Meta:
         ordering = ("-pub_date",)
@@ -81,9 +78,7 @@ class TagRecipe(models.Model):
 class IngredientRecipe(models.Model):
     ingredient = models.ForeignKey(Ingredient, on_delete=models.PROTECT)
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)
-    amount = models.PositiveSmallIntegerField(
-        verbose_name="Количество", null=True
-    )
+    amount = models.PositiveSmallIntegerField(verbose_name="Количество", null=True)
 
 
 class Subscription(models.Model):
@@ -163,7 +158,4 @@ class ShoppingCart(models.Model):
         verbose_name_plural = "Рецепты в списке покупок"
 
     def __str__(self):
-        return (
-            f"Рецепт {self.recipe} в корзине"
-            f"пользователя {self.user.username}."
-        )
+        return f"Рецепт {self.recipe} в корзине" f"пользователя {self.user.username}."
