@@ -144,7 +144,8 @@ class IngredientViewSet(ListRetrieveViewSet):
     serializer_class = IngredientSerializer
     permission_classes = (AllowAny,)
     pagination_class = None
-    filter_backends = (DjangoFilterBackend,)
+    filter_backends = (DjangoFilterBackend, filters.SearchFilter)
+    search_fields = ("^name",)
 
 
 class UsersSubscriptionViewSet(UserViewSet):

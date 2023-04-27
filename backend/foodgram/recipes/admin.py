@@ -4,27 +4,24 @@ from .models import Ingredient, Recipe, Subscription, Tag
 
 
 class RecipeAdmin(admin.ModelAdmin):
-    list_display = ("title", "author")
-    search_filter = (
-        "author",
-        "title",
-    )
+    list_display = ("id", "title", "description", "pub_date", "author")
+    search_fields = ("title", "author")
 
 
 class TagAdmin(admin.ModelAdmin):
-    list_display = ("title", "slug", "color")
+    list_display = ("id", "title", "color", "slug")
+    search_fields = ("title",)
+    prepopulated_fields = {"slug": ("name",)}
 
 
 class IngredientAdmin(admin.ModelAdmin):
-    list_display = ("title",)
-    list_filter = ("title",)
+    list_display = ("id", "title", "unit")
+    search_fields = ("title",)
 
 
 class SubscriptionAdmin(admin.ModelAdmin):
-    list_display = (
-        "user",
-        "author",
-    )
+    list_display = ("id", "user", "author")
+    search_fields = ("user", "author")
 
 
 admin.site.register(Recipe, RecipeAdmin)

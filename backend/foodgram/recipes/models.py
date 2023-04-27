@@ -9,10 +9,9 @@ class Tag(models.Model):
         verbose_name="Название", unique=True, max_length=100
     )
     slug = models.SlugField(verbose_name="Идентификатор тэга", unique=True)
-    color = models.CharField(max_length=6, unique=True)
+    color = models.CharField(max_length=7, unique=True)
 
     class Meta:
-        ordering = ("-title",)
         verbose_name = "Тэг"
         verbose_name_plural = "Тэги"
 
