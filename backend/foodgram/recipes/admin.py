@@ -16,7 +16,7 @@ class TagAdmin(admin.ModelAdmin):
 
 
 class IngredientAdmin(admin.ModelAdmin):
-    list_display = ("unit",)
+    list_display = ("title",)
     list_filter = ("title",)
 
 
