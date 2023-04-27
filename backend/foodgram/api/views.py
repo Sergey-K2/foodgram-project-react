@@ -145,7 +145,8 @@ class IngredientViewSet(ListRetrieveViewSet):
     permission_classes = (AllowAny,)
     pagination_class = None
     filter_backends = (DjangoFilterBackend, filters.SearchFilter)
-    filterset_fields = ("^title",)
+    search_fields = ("^title",)
+    http_method_names = ["get"]
 
 
 class UsersSubscriptionViewSet(UserViewSet):
