@@ -3,8 +3,16 @@ import base64
 from django.conf import settings
 from django.core.files.base import ContentFile
 from djoser.serializers import UserCreateSerializer, UserSerializer
-from recipes.models import (Favorite, Ingredient, IngredientRecipe, Recipe,
-                            ShoppingCart, Subscription, Tag, User)
+from recipes.models import (
+    Favorite,
+    Ingredient,
+    IngredientRecipe,
+    Recipe,
+    ShoppingCart,
+    Subscription,
+    Tag,
+    User,
+)
 from rest_framework import serializers
 from rest_framework.serializers import ModelSerializer
 from rest_framework.validators import UniqueTogetherValidator
@@ -180,3 +188,22 @@ class CurrentUserDefaultId(object):
         if serializer_instance is not None:
             self.user_id = serializer_instance.context["request"].user.id
             return self.user_id
+
+
+class IngredientRecipeSerializer(ModelSerializer):
+    id = serializers.SerializerMethodField(method_name="get_id")
+    title = serializers.SerializerMethodField(method_name="get_title")
+    unit = serializers.SerializerMethodField(method_name="get_unit")
+
+    def get_id(self, obj):
+        return obj.ingredient.id
+
+    def get_name(self, obj):
+        return obj.ingredient.title
+
+    def get_measurement_unit(self, obj):
+        return obj.ingredient.unit
+
+    class Meta:
+        model = IngredientRecipe
+        fields = ("id", "title", "unit", "amount")

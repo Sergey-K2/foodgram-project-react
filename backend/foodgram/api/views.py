@@ -2,8 +2,16 @@ from django.db.models import Sum
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from djoser.views import UserViewSet
-from recipes.models import (Favorite, Ingredient, Recipe, ShoppingCart,
-                            Subscription, Tag, User)
+from recipes.models import (
+    Favorite,
+    Ingredient,
+    IngredientRecipe,
+    Recipe,
+    ShoppingCart,
+    Subscription,
+    Tag,
+    User,
+)
 from rest_framework import exceptions, filters, mixins
 from rest_framework.decorators import action
 from rest_framework.pagination import LimitOffsetPagination
@@ -12,8 +20,13 @@ from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet, ModelViewSet
 
 from .permissions import AuthenticatedOrAuthorOrReadOnly
-from .serializers import (IngredientSerializer, RecipeSerializer,
-                          SubscriptionSerializer, TagSerializer)
+from .serializers import (
+    IngredientSerializer,
+    RecipeSerializer,
+    SubscriptionSerializer,
+    TagSerializer,
+    IngredientRecipeSerializer,
+)
 
 
 class ListRetrieveViewSet(
@@ -105,7 +118,7 @@ class RecipeViewSet(ModelViewSet):
         shopping_cart = ShoppingCart.objects.filter(user=self.request.user)
         recipes = [element.recipe.id for element in shopping_cart]
         shopping_list = (
-            Ingredient.objects.filter(recipe__in=recipes)
+            IngredientRecipe.objects.filter(recipe__in=recipes)
             .values("ingredient")
             .annotate(amount=Sum("amount"))
         )
@@ -113,7 +126,7 @@ class RecipeViewSet(ModelViewSet):
         for element in shopping_list:
             ingredient = Ingredient.objects.get(pk=element["ingredient"])
             text += (
-                f"{ingredient.name} ({ingredient.unit}) - {element.amount}\n"
+                f"{ingredient.title} ({ingredient.unit}) - {element.amount}\n"
             )
         return HttpResponse(
             text,
