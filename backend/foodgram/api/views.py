@@ -79,7 +79,9 @@ class RecipeViewSet(ModelViewSet):
 
         if self.request.method == "POST":
             if Favorite.objects.filter(user=user, recipe=recipe).exists():
-                raise exceptions.ValidationError("Рецепт уже добавлен в избранное!")
+                raise exceptions.ValidationError(
+                    "Рецепт уже добавлен в избранное!"
+                )
 
             Favorite.objects.create(user=user, recipe=recipe)
             serializer = RecipeSerializer(
@@ -97,7 +99,9 @@ class RecipeViewSet(ModelViewSet):
         recipe = get_object_or_404(Recipe, pk=pk)
 
         if self.request.method == "DELETE":
-            if not ShoppingCart.objects.filter(user=user, recipe=recipe).exists():
+            if not ShoppingCart.objects.filter(
+                user=user, recipe=recipe
+            ).exists():
                 raise exceptions.ValidationError("Рецепт не в списке покупок!")
             get_object_or_404(ShoppingCart, user=user, recipe=recipe).delete()
             return Response()
@@ -113,7 +117,9 @@ class RecipeViewSet(ModelViewSet):
             )
             return Response(serializer.data)
 
-    @action(detail=True, methods=["get"], permission_classes=(IsAuthenticated,))
+    @action(
+        detail=True, methods=["get"], permission_classes=(IsAuthenticated,)
+    )
     def download_shopping_cart(self, request):
         shopping_cart = ShoppingCart.objects.filter(user=self.request.user)
         recipes = [element.recipe.id for element in shopping_cart]
@@ -125,11 +131,15 @@ class RecipeViewSet(ModelViewSet):
         text = "Перечень ингредиентов для рецептов: \n"
         for element in shopping_list:
             ingredient = Ingredient.objects.get(pk=element["ingredient"])
-            text += f"{ingredient.title} ({ingredient.unit}) - {element.amount}\n"
+            text += (
+                f"{ingredient.title} ({ingredient.unit}) - {element.amount}\n"
+            )
         return HttpResponse(
             text,
             content_type="text/plain",
-            headers={"Content-Disposition": "attachment; filename=shopping-list.txt"},
+            headers={
+                "Content-Disposition": "attachment; filename=shopping-list.txt"
+            },
         )
 
 
@@ -181,7 +191,11 @@ class UsersSubscriptionViewSet(UserViewSet):
             return Response(serializer.data)
 
         if self.request.method == "DELETE":
-            if not Subscription.objects.filter(user=user, author=author).exists():
+            if not Subscription.objects.filter(
+                user=user, author=author
+            ).exists():
                 raise exceptions.ValidationError("Подписки не существует")
-            subscription = get_object_or_404(Subscription, user=user, author=author)
+            subscription = get_object_or_404(
+                Subscription, user=user, author=author
+            )
             subscription.delete()

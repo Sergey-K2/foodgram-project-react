@@ -41,7 +41,9 @@ class IngredientSerializer(ModelSerializer):
             amount < settings.INGREDIENT_LOWER_LIMIT
             or amount > settings.INGREDIENT_UPPER_LIMIT
         ):
-            return "Количество ингредиента должно быть в интервале от 0 до 32767"
+            return (
+                "Количество ингредиента должно быть в интервале от 0 до 32767"
+            )
         return amount
 
 
@@ -170,12 +172,16 @@ class IngredientRecipeSerializer(ModelSerializer):
 
 class CreateUpdateRecipeSerializer(ModelSerializer):
     author = CustomUserSerializer(read_only=True)
-    tags = serializers.PrimaryKeyRelatedField(queryset=Tag.objects.all(), many=True)
+    tags = serializers.PrimaryKeyRelatedField(
+        queryset=Tag.objects.all(), many=True
+    )
     ingredients = IngredientRecipeSerializer(many=True)
     image = Base64ImageField()
     time = serializers.IntegerField(
         validators=(
-            MinValueValidator(1, message="Минимальное время приготовления = 1."),
+            MinValueValidator(
+                1, message="Минимальное время приготовления = 1."
+            ),
         )
     )
 
@@ -183,7 +189,9 @@ class CreateUpdateRecipeSerializer(ModelSerializer):
         instance.author = validated_data.get("author", instance.author)
         instance.title = validated_data.get("title", instance.title)
         instance.image = validated_data.get("image", instance.image)
-        instance.description = validated_data.get("description", instance.description)
+        instance.description = validated_data.get(
+            "description", instance.description
+        )
         instance.time = validated_data.get("time", instance.time)
         instance.tags.clear()
         instance.tags = self.initial_data.get("tags")
@@ -218,7 +226,9 @@ class CreateUpdateIngredientRecipeSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField()
     amount = serializers.IntegerField(
         validators=(
-            MinValueValidator(1, message="Минимальное количество ингредиентов = 1"),
+            MinValueValidator(
+                1, message="Минимальное количество ингредиентов = 1"
+            ),
         )
     )
 
