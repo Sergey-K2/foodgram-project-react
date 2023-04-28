@@ -53,13 +53,13 @@ class Recipe(models.Model):
     ingredient = models.ManyToManyField(
         Ingredient,
         through="IngredientRecipe",
-        related_name="recipe",
+        related_name="recipes",
         verbose_name="Ингридиент",
     )
     tags = models.ManyToManyField(
         Tag,
         through="TagRecipe",
-        related_name="recipes",
+        related_name="recipe",
         verbose_name="Тег",
     )
     cooking_time = models.PositiveSmallIntegerField(
