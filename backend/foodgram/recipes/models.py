@@ -43,11 +43,11 @@ class Recipe(models.Model):
         verbose_name="Автор",
     )
     pub_date = models.DateTimeField("Дата публикации", auto_now_add=True)
-    title = models.CharField(verbose_name="Название", max_length=200)
+    name = models.CharField(verbose_name="Название", max_length=200)
     image = models.ImageField(
         verbose_name="Картинка", upload_to="recipes/images/"
     )
-    description = models.TextField(
+    text = models.TextField(
         verbose_name="Описание", help_text="Описание рецепта"
     )
     ingredient = models.ManyToManyField(

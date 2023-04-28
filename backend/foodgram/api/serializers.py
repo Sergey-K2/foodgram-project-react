@@ -189,9 +189,7 @@ class CreateUpdateRecipeSerializer(ModelSerializer):
         instance.author = validated_data.get("author", instance.author)
         instance.name = validated_data.get("name", instance.name)
         instance.image = validated_data.get("image", instance.image)
-        instance.description = validated_data.get(
-            "description", instance.description
-        )
+        instance.text = validated_data.get("text", instance.text)
         instance.time = validated_data.get("time", instance.time)
         instance.tags.clear()
         instance.tags = self.initial_data.get("tags")
