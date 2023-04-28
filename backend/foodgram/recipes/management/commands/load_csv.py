@@ -19,6 +19,6 @@ class Command(BaseCommand):
         next(csv_reader, None)
         for row in csv_reader:
             obj, created = Ingredient.objects.get_or_create(
-                title=row[0], unit=row[1]
+                name=row[0], unit=row[1]
             )
         print("Ингридиенты добавлены!")
