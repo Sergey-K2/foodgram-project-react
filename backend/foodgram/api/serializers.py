@@ -163,7 +163,10 @@ class IngredientRecipeSerializer(ModelSerializer):
                 amount < settings.INGREDIENT_LOWER_LIMIT
                 or amount > settings.INGREDIENT_UPPER_LIMIT
             ):
-                return "Количество ингредиента должно быть в интервале от 0 до 32767"
+                return (
+                    "Количество ингредиента должно"
+                    "быть в интервале от 0 до 32767"
+                )
             return amount
 
 
