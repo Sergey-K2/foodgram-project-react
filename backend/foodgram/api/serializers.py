@@ -177,7 +177,7 @@ class CreateUpdateRecipeSerializer(ModelSerializer):
     )
     ingredients = IngredientRecipeSerializer(many=True)
     image = Base64ImageField()
-    time = serializers.IntegerField(
+    cooking_time = serializers.IntegerField(
         validators=(
             MinValueValidator(
                 1, message="Минимальное время приготовления = 1."
@@ -190,7 +190,7 @@ class CreateUpdateRecipeSerializer(ModelSerializer):
         instance.name = validated_data.get("name", instance.name)
         instance.image = validated_data.get("image", instance.image)
         instance.text = validated_data.get("text", instance.text)
-        instance.time = validated_data.get("time", instance.time)
+        instance.cooking_time = validated_data.get("cooking_time", instance.cooking_time)
         instance.tags.clear()
         instance.tags = self.initial_data.get("tags")
         instance.ingredients.clear()

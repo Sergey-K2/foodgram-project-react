@@ -4,8 +4,8 @@ from .models import Ingredient, Recipe, Subscription, Tag
 
 
 class RecipeAdmin(admin.ModelAdmin):
-    list_display = ("id", "title", "description", "pub_date", "author")
-    search_fields = ("title", "author")
+    list_display = ("id", "name", "text", "pub_date", "author")
+    search_fields = ("name", "author")
 
 
 class TagAdmin(admin.ModelAdmin):
