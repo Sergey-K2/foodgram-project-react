@@ -154,7 +154,7 @@ class IngredientRecipeSerializer(ModelSerializer):
     name = serializers.SerializerMethodField(method_name="get_name")
     measurement_unit = serializers.SerializerMethodField(
         method_name="get_measurement_unit"
-        )
+    )
 
     def get_id(self, obj):
         return obj.ingredient.id
@@ -192,7 +192,9 @@ class CreateUpdateRecipeSerializer(ModelSerializer):
         instance.text = validated_data.get(
             "text", instance.text
         )
-        instance.cooking_time = validated_data.get("cooking_time", instance.cooking_time)
+        instance.cooking_time = validated_data.get(
+            "cooking_time", instance.cooking_time
+        )
         instance.tags.clear()
         instance.tags = self.initial_data.get("tags")
         instance.ingredients.clear()
