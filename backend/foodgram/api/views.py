@@ -122,7 +122,7 @@ class RecipeViewSet(ModelViewSet):
             ingredient = Ingredient.objects.get(pk=element["ingredient"])
             text += (
                 f"{ingredient.name} ({ingredient.measurement_unit})"
-                "- {element.amount}\n"
+                f"- {element.amount}\n"
             )
         return HttpResponse(
             text,
