@@ -152,7 +152,7 @@ class IngredientRecipeSerializer(ModelSerializer):
         return obj.ingredient.name
 
     def get_measurement_unit(self, obj):
-        return obj.ingredient.unit
+        return obj.ingredient.measurement_unit
 
     class Meta:
         model = IngredientRecipe
