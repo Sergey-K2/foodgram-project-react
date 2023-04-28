@@ -121,7 +121,8 @@ class RecipeViewSet(ModelViewSet):
         for element in shopping_list:
             ingredient = Ingredient.objects.get(pk=element["ingredient"])
             text += (
-                f"{ingredient.title} ({ingredient.unit}) - {element.amount}\n"
+                f"{ingredient.name} ({ingredient.measurement_unit})"
+                 f" - {element.amount}\n"
             )
         return HttpResponse(
             text,
@@ -145,7 +146,7 @@ class IngredientViewSet(ListRetrieveViewSet):
     permission_classes = (AllowAny,)
     pagination_class = None
     filter_backends = (DjangoFilterBackend, filters.SearchFilter)
-    search_fields = ("^title",)
+    search_fields = ("^name",)
 
 
 class UsersSubscriptionViewSet(UserViewSet):

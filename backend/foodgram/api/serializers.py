@@ -44,7 +44,7 @@ class TagSerializer(ModelSerializer):
         model = Tag
         fields = (
             "id",
-            "title",
+            "name",
             "color",
             "slug",
         )
@@ -54,8 +54,8 @@ class RecipeSerializer(ModelSerializer):
     author = serializers.SlugRelatedField(
         slug_field="author", many=True, read_only=True
     )
-    tag = TagSerializer(many=True)
-    ingredient = IngredientSerializer(many=True)
+    tags = TagSerializer(many=True)
+    ingredients = IngredientSerializer(many=True)
     image = Base64ImageField()
     is_in_favorite = serializers.SerializerMethodField()
     is_in_shopping_cart = serializers.SerializerMethodField()
@@ -117,7 +117,8 @@ class CustomUserCreateSerializer(UserCreateSerializer):
 
 
 class CustomUserSerializer(UserSerializer):
-    is_following = serializers.SerializerMethodField(read_only=True)
+    is_subscribed = serializers.SerializerMethodField(
+        read_only=True, method_name="get_is_subscribed")
 
     class Meta:
         model = User
@@ -130,7 +131,7 @@ class CustomUserSerializer(UserSerializer):
             "is_subscribed",
         )
 
-    def get_is_following(self, obj):
+    def get_is_subscribed(self, obj):
         request = self.context.get("request")
         if not request or request.user.is_anonymous:
             return False
@@ -150,21 +151,23 @@ class CurrentUserDefaultId(object):
 
 class IngredientRecipeSerializer(ModelSerializer):
     id = serializers.SerializerMethodField(method_name="get_id")
-    title = serializers.SerializerMethodField(method_name="get_title")
-    unit = serializers.SerializerMethodField(method_name="get_unit")
+    name = serializers.SerializerMethodField(method_name="get_name")
+    measurement_unit = serializers.SerializerMethodField(
+        method_name="get_measurement_unit"
+        )
 
     def get_id(self, obj):
         return obj.ingredient.id
 
     def get_name(self, obj):
-        return obj.ingredient.title
+        return obj.ingredient.name
 
     def get_measurement_unit(self, obj):
-        return obj.ingredient.unit
+        return obj.ingredient.measurement_unit
 
     class Meta:
         model = IngredientRecipe
-        fields = ("id", "title", "unit", "amount")
+        fields = ("id", "name", "measurement_unit", "amount")
 
 
 class CreateUpdateRecipeSerializer(ModelSerializer):
@@ -174,7 +177,7 @@ class CreateUpdateRecipeSerializer(ModelSerializer):
     )
     ingredients = IngredientRecipeSerializer(many=True)
     image = Base64ImageField()
-    time = serializers.IntegerField(
+    cooking_time = serializers.IntegerField(
         validators=(
             MinValueValidator(
                 1, message="Минимальное время приготовления = 1."
@@ -184,12 +187,12 @@ class CreateUpdateRecipeSerializer(ModelSerializer):
 
     def update(self, instance, validated_data):
         instance.author = validated_data.get("author", instance.author)
-        instance.title = validated_data.get("title", instance.title)
+        instance.name = validated_data.get("name", instance.name)
         instance.image = validated_data.get("image", instance.image)
-        instance.description = validated_data.get(
-            "description", instance.description
+        instance.text = validated_data.get(
+            "text", instance.text
         )
-        instance.time = validated_data.get("time", instance.time)
+        instance.cooking_time = validated_data.get("cooking_time", instance.cooking_time)
         instance.tags.clear()
         instance.tags = self.initial_data.get("tags")
         instance.ingredients.clear()
@@ -209,7 +212,7 @@ class CreateUpdateRecipeSerializer(ModelSerializer):
                     ingredient=ingredients.get("id"),
                     recipe=recipe,
                     amount=ingredients.get("amount"),
-                    unit=ingredients.get("unit"),
+                    measurement_unit=ingredients.get("measurement_unit"),
                 )
                 for ingredient in ingredients
             ],

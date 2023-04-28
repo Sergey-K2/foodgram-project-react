@@ -4,19 +4,19 @@ from .models import Ingredient, Recipe, Subscription, Tag
 
 
 class RecipeAdmin(admin.ModelAdmin):
-    list_display = ("id", "title", "description", "pub_date", "author")
-    search_fields = ("title", "author")
+    list_display = ("id", "name", "text", "pub_date", "author")
+    search_fields = ("name", "author")
 
 
 class TagAdmin(admin.ModelAdmin):
-    list_display = ("id", "title", "color", "slug")
-    search_fields = ("title",)
-    prepopulated_fields = {"slug": ("title",)}
+    list_display = ("id", "name", "color", "slug")
+    search_fields = ("name",)
+    prepopulated_fields = {"slug": ("name",)}
 
 
 class IngredientAdmin(admin.ModelAdmin):
-    list_display = ("id", "title", "unit")
-    search_fields = ("title",)
+    list_display = ("id", "name", "measurement_unit")
+    search_fields = ("name",)
 
 
 class SubscriptionAdmin(admin.ModelAdmin):

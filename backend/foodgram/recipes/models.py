@@ -5,7 +5,7 @@ User = get_user_model()
 
 
 class Tag(models.Model):
-    title = models.CharField(
+    name = models.CharField(
         verbose_name="Название", unique=True, max_length=100
     )
     slug = models.SlugField(verbose_name="Идентификатор тэга", unique=True)
@@ -17,19 +17,19 @@ class Tag(models.Model):
 
 
 class Ingredient(models.Model):
-    title = models.CharField(verbose_name="Название", max_length=100)
-    unit = models.CharField(
+    name = models.CharField(verbose_name="Название", max_length=100)
+    measurement_unit = models.CharField(
         verbose_name="Единицы измерения",
         max_length=100,
     )
 
     class Meta:
-        ordering = ("-title",)
+        ordering = ("-name",)
         verbose_name = "Ингредиент"
         verbose_name_plural = "Ингредиенты"
         constraints = (
             models.UniqueConstraint(
-                fields=("title", "unit"),
+                fields=("name", "measurement_unit"),
                 name="unique_ingredient_recipe",
             ),
         )
@@ -43,14 +43,14 @@ class Recipe(models.Model):
         verbose_name="Автор",
     )
     pub_date = models.DateTimeField("Дата публикации", auto_now_add=True)
-    title = models.CharField(verbose_name="Название", max_length=200)
+    name = models.CharField(verbose_name="Название", max_length=200)
     image = models.ImageField(
         verbose_name="Картинка", upload_to="recipes/images/"
     )
-    description = models.TextField(
+    text = models.TextField(
         verbose_name="Описание", help_text="Описание рецепта"
     )
-    ingredient = models.ManyToManyField(
+    ingredients = models.ManyToManyField(
         Ingredient,
         through="IngredientRecipe",
         related_name="recipes",
@@ -62,7 +62,7 @@ class Recipe(models.Model):
         related_name="recipe",
         verbose_name="Тег",
     )
-    time = models.PositiveSmallIntegerField(verbose_name="Время приготовления")
+    cooking_time = models.PositiveSmallIntegerField(verbose_name="Время приготовления")
 
     class Meta:
         ordering = ("-pub_date",)
@@ -70,7 +70,7 @@ class Recipe(models.Model):
         verbose_name_plural = "Рецепты"
 
     def __str__(self):
-        return self.title
+        return self.name
 
 
 class TagRecipe(models.Model):
