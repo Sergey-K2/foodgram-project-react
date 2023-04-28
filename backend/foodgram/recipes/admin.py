@@ -9,14 +9,14 @@ class RecipeAdmin(admin.ModelAdmin):
 
 
 class TagAdmin(admin.ModelAdmin):
-    list_display = ("id", "title", "color", "slug")
-    search_fields = ("title",)
-    prepopulated_fields = {"slug": ("title",)}
+    list_display = ("id", "name", "color", "slug")
+    search_fields = ("name",)
+    prepopulated_fields = {"slug": ("name",)}
 
 
 class IngredientAdmin(admin.ModelAdmin):
-    list_display = ("id", "title", "unit")
-    search_fields = ("title",)
+    list_display = ("id", "name", "measurement_unit")
+    search_fields = ("name",)
 
 
 class SubscriptionAdmin(admin.ModelAdmin):

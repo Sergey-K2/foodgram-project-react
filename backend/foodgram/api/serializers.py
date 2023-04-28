@@ -28,23 +28,13 @@ class IngredientSerializer(ModelSerializer):
         model = Ingredient
         fields = "__all__"
 
-    def validate_amount(self, amount):
-        if (
-            amount < settings.INGREDIENT_LOWER_LIMIT
-            or amount > settings.INGREDIENT_UPPER_LIMIT
-        ):
-            return (
-                "Количество ингредиента должно быть в интервале от 0 до 32767"
-            )
-        return amount
-
 
 class TagSerializer(ModelSerializer):
     class Meta:
         model = Tag
         fields = (
             "id",
-            "title",
+            "name",
             "color",
             "slug",
         )
@@ -150,8 +140,10 @@ class CurrentUserDefaultId(object):
 
 class IngredientRecipeSerializer(ModelSerializer):
     id = serializers.SerializerMethodField(method_name="get_id")
-    title = serializers.SerializerMethodField(method_name="get_title")
-    unit = serializers.SerializerMethodField(method_name="get_unit")
+    name = serializers.SerializerMethodField(method_name="get_name")
+    measurement_unit = serializers.SerializerMethodField(
+        method_name="get_unit"
+    )
 
     def get_id(self, obj):
         return obj.ingredient.id
@@ -164,7 +156,15 @@ class IngredientRecipeSerializer(ModelSerializer):
 
     class Meta:
         model = IngredientRecipe
-        fields = ("id", "title", "unit", "amount")
+        fields = ("id", "name", "measurement_unit", "amount")
+
+        def validate_amount(self, amount):
+            if (
+                amount < settings.INGREDIENT_LOWER_LIMIT
+                or amount > settings.INGREDIENT_UPPER_LIMIT
+            ):
+                return "Количество ингредиента должно быть в интервале от 0 до 32767"
+            return amount
 
 
 class CreateUpdateRecipeSerializer(ModelSerializer):
@@ -184,7 +184,7 @@ class CreateUpdateRecipeSerializer(ModelSerializer):
 
     def update(self, instance, validated_data):
         instance.author = validated_data.get("author", instance.author)
-        instance.title = validated_data.get("title", instance.title)
+        instance.name = validated_data.get("name", instance.name)
         instance.image = validated_data.get("image", instance.image)
         instance.description = validated_data.get(
             "description", instance.description
@@ -209,7 +209,7 @@ class CreateUpdateRecipeSerializer(ModelSerializer):
                     ingredient=ingredients.get("id"),
                     recipe=recipe,
                     amount=ingredients.get("amount"),
-                    unit=ingredients.get("unit"),
+                    unit=ingredients.get("measurement_unit"),
                 )
                 for ingredient in ingredients
             ],
