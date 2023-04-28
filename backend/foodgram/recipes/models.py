@@ -27,6 +27,12 @@ class Ingredient(models.Model):
         ordering = ("-name",)
         verbose_name = "Ингредиент"
         verbose_name_plural = "Ингредиенты"
+        constraints = (
+            models.UniqueConstraint(
+                fields=("name", "measurement_unit"),
+                name="unique_ingredient_recipe",
+            ),
+        )
 
 
 class Recipe(models.Model):
@@ -46,6 +52,7 @@ class Recipe(models.Model):
     )
     ingredient = models.ManyToManyField(
         Ingredient,
+        through="IngredientRecipe",
         related_name="recipes",
         verbose_name="Ингридиент",
     )
