@@ -158,16 +158,16 @@ class IngredientRecipeSerializer(ModelSerializer):
         model = IngredientRecipe
         fields = ("id", "name", "measurement_unit", "amount")
 
-        def validate_amount(self, amount):
-            if (
-                amount < settings.INGREDIENT_LOWER_LIMIT
-                or amount > settings.INGREDIENT_UPPER_LIMIT
-            ):
-                return (
-                    "Количество ингредиента должно"
-                    "быть в интервале от 0 до 32767"
-                )
-            return amount
+    def validate_amount(self, amount):
+        if (
+            amount < settings.INGREDIENT_LOWER_LIMIT
+            or amount > settings.INGREDIENT_UPPER_LIMIT
+        ):
+            return (
+                "Количество ингредиента должно"
+                "быть в интервале от 0 до 32767"
+            )
+        return amount
 
 
 class CreateUpdateRecipeSerializer(ModelSerializer):
