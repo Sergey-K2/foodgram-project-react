@@ -222,6 +222,10 @@ class CreateUpdateRecipeSerializer(ModelSerializer):
         recipe.save()
         return recipe
 
+    class Meta:
+        model = Recipe
+        exclude = ("pub_date",)
+
 
 class CreateUpdateIngredientRecipeSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField()
