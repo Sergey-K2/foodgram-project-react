@@ -4,23 +4,12 @@ from django.conf import settings
 from django.core.files.base import ContentFile
 from django.core.validators import MinValueValidator
 from djoser.serializers import UserCreateSerializer, UserSerializer
+from drf_base64.fields import Base64ImageField
 from recipes.models import (Favorite, Ingredient, IngredientRecipe, Recipe,
                             ShoppingCart, Subscription, Tag, User)
 from rest_framework import serializers
 from rest_framework.serializers import ModelSerializer
 from rest_framework.validators import UniqueTogetherValidator
-
-
-class Base64ImageField(serializers.Field):
-    def to_representation(self, value):
-        return value
-
-    def to_internal_value(self, data):
-        if isinstance(data, str) and data.startswith("data:image"):
-            format, imgstr = data.split(";base64,")
-            ext = format.split("/")[-1]
-            data = ContentFile(base64.b64decode(imgstr), name="temp." + ext)
-        return super().to_internal_value(data)
 
 
 class IngredientSerializer(ModelSerializer):
@@ -221,13 +210,6 @@ class CreateUpdateRecipeSerializer(ModelSerializer):
         )
         recipe.save()
         return recipe
-
-    def to_representation(self, instance):
-        serializer = RecipeSerializer(
-            instance, context={"request": self.context.get("request")}
-        )
-
-        return serializer.data
 
     class Meta:
         model = Recipe
