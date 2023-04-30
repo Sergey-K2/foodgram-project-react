@@ -196,7 +196,7 @@ class CreateUpdateRecipeSerializer(ModelSerializer):
         IngredientRecipe.objects.bulk_create(
             [
                 IngredientRecipe(
-                    ingredient=Ingredient.objects.get(id=ingredient["id"]),
+                    ingredient=Ingredient.objects.get(id=ingredient.get("id")),
                     recipe=recipe,
                     amount=ingredient.get("amount"),
                     measurement_unit=ingredient.get("measurement_unit"),
