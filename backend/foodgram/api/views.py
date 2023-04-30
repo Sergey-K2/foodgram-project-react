@@ -12,7 +12,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet, ModelViewSet
 
-from .permissions import AuthenticatedOrAuthorOrReadOnly
+from .permissions import IsAuthorOrReadOnly
 from .serializers import (CreateUpdateRecipeSerializer, IngredientSerializer,
                           RecipeSerializer, SubscriptionSerializer,
                           TagSerializer)
@@ -41,7 +41,7 @@ class CreateDeleteViewSet(
 
 class RecipeViewSet(ModelViewSet):
     queryset = Recipe.objects.all()
-    permission_classes = (AuthenticatedOrAuthorOrReadOnly,)
+    permission_classes = (IsAuthorOrReadOnly,)
     pagination_class = LimitOffsetPagination
 
     def perform_create(self, serializer):
