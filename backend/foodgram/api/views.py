@@ -44,6 +44,9 @@ class RecipeViewSet(ModelViewSet):
     permission_classes = (AuthenticatedOrAuthorOrReadOnly,)
     pagination_class = LimitOffsetPagination
 
+    def perform_create(self, serializer):
+        serializer.save(author=self.request.user)
+
     def get_serializer_class(self):
         if self.action in ("create", "partial_update"):
             return CreateUpdateRecipeSerializer
