@@ -3,8 +3,16 @@ from django.core.validators import MinValueValidator
 from django.shortcuts import get_object_or_404
 from djoser.serializers import UserCreateSerializer, UserSerializer
 from drf_base64.fields import Base64ImageField
-from recipes.models import (Favorite, Ingredient, IngredientRecipe, Recipe,
-                            ShoppingCart, Subscription, Tag, User)
+from recipes.models import (
+    Favorite,
+    Ingredient,
+    IngredientRecipe,
+    Recipe,
+    ShoppingCart,
+    Subscription,
+    Tag,
+    User,
+)
 from rest_framework import serializers
 from rest_framework.serializers import ModelSerializer
 from rest_framework.validators import UniqueTogetherValidator
@@ -196,15 +204,12 @@ class CreateUpdateRecipeSerializer(ModelSerializer):
         IngredientRecipe.objects.bulk_create(
             [
                 IngredientRecipe(
-                    ingredient=get_object_or_404(
-                        Ingredient, pk=ingredient["id"]
-                    ),
+                    ingredient=Ingredient.objects.get(id=ingredient("id")),
                     recipe=recipe,
                     amount=ingredient.get("amount"),
                 )
                 for ingredient in ingredients
             ],
-            batch_size=999,
         )
         recipe.save()
         return recipe
