@@ -4,8 +4,16 @@ from django.conf import settings
 from django.core.files.base import ContentFile
 from django.core.validators import MinValueValidator
 from djoser.serializers import UserCreateSerializer, UserSerializer
-from recipes.models import (Favorite, Ingredient, IngredientRecipe, Recipe,
-                            ShoppingCart, Subscription, Tag, User)
+from recipes.models import (
+    Favorite,
+    Ingredient,
+    IngredientRecipe,
+    Recipe,
+    ShoppingCart,
+    Subscription,
+    Tag,
+    User,
+)
 from rest_framework import serializers
 from rest_framework.serializers import ModelSerializer
 from rest_framework.validators import UniqueTogetherValidator
@@ -158,13 +166,13 @@ class IngredientRecipeSerializer(ModelSerializer):
     )
 
     def get_id(self, obj):
-        return obj.ingredients.id
+        return obj.ingredient.id
 
     def get_name(self, obj):
-        return obj.ingredients.name
+        return obj.ingredient.name
 
     def get_measurement_unit(self, obj):
-        return obj.ingredients.measurement_unit
+        return obj.ingredient.measurement_unit
 
     class Meta:
         model = IngredientRecipe
