@@ -1,8 +1,6 @@
 from django.conf import settings
 from django.core.validators import MinValueValidator
-from django.shortcuts import get_object_or_404
 from djoser.serializers import UserCreateSerializer, UserSerializer
-from drf_base64.fields import Base64ImageField
 from recipes.models import (Favorite, Ingredient, IngredientRecipe, Recipe,
                             ShoppingCart, Subscription, Tag, User)
 from rest_framework import serializers
