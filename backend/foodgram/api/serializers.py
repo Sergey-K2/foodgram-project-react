@@ -191,7 +191,6 @@ class CreateUpdateRecipeSerializer(ModelSerializer):
         tags = validated_data.pop("tags")
         ingredients = validated_data.pop("ingredients")
         recipe = Recipe.objects.create(**validated_data)
-        Recipe.objects.create(**validated_data)
         recipe.tags.set(tags)
         IngredientRecipe.objects.bulk_create(
             [
@@ -199,7 +198,6 @@ class CreateUpdateRecipeSerializer(ModelSerializer):
                     ingredient=Ingredient.objects.get(id=ingredient.get("id")),
                     recipe=recipe,
                     amount=ingredient.get("amount"),
-                    measurement_unit=ingredient.get("measurement_unit"),
                 )
                 for ingredient in ingredients
             ],
