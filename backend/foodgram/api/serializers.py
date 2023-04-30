@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.core.validators import MinValueValidator
+from django.shortcuts import get_object_or_404
 from djoser.serializers import UserCreateSerializer, UserSerializer
 from drf_base64.fields import Base64ImageField
 from recipes.models import (Favorite, Ingredient, IngredientRecipe, Recipe,
@@ -195,7 +196,9 @@ class CreateUpdateRecipeSerializer(ModelSerializer):
         IngredientRecipe.objects.bulk_create(
             [
                 IngredientRecipe(
-                    ingredient=Ingredient.objects.get(id=ingredient.get("id")),
+                    ingredient=get_object_or_404(
+                        Ingredient, pk=ingredient["id"]
+                    ),
                     recipe=recipe,
                     amount=ingredient.get("amount"),
                 )
