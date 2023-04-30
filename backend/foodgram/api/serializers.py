@@ -4,8 +4,16 @@ from django.conf import settings
 from django.core.files.base import ContentFile
 from django.core.validators import MinValueValidator
 from djoser.serializers import UserCreateSerializer, UserSerializer
-from recipes.models import (Favorite, Ingredient, IngredientRecipe, Recipe,
-                            ShoppingCart, Subscription, Tag, User)
+from recipes.models import (
+    Favorite,
+    Ingredient,
+    IngredientRecipe,
+    Recipe,
+    ShoppingCart,
+    Subscription,
+    Tag,
+    User,
+)
 from rest_framework import serializers
 from rest_framework.serializers import ModelSerializer
 from rest_framework.validators import UniqueTogetherValidator
@@ -118,7 +126,8 @@ class CustomUserCreateSerializer(UserCreateSerializer):
 
 class CustomUserSerializer(UserSerializer):
     is_subscribed = serializers.SerializerMethodField(
-        read_only=True, method_name="get_is_subscribed")
+        read_only=True, method_name="get_is_subscribed"
+    )
 
     class Meta:
         model = User
@@ -157,13 +166,13 @@ class IngredientRecipeSerializer(ModelSerializer):
     )
 
     def get_id(self, obj):
-        return obj.ingredient.id
+        return obj.ingredients.id
 
     def get_name(self, obj):
-        return obj.ingredient.name
+        return obj.ingredients.name
 
     def get_measurement_unit(self, obj):
-        return obj.ingredient.measurement_unit
+        return obj.ingredients.measurement_unit
 
     class Meta:
         model = IngredientRecipe
@@ -189,9 +198,7 @@ class CreateUpdateRecipeSerializer(ModelSerializer):
         instance.author = validated_data.get("author", instance.author)
         instance.name = validated_data.get("name", instance.name)
         instance.image = validated_data.get("image", instance.image)
-        instance.text = validated_data.get(
-            "text", instance.text
-        )
+        instance.text = validated_data.get("text", instance.text)
         instance.cooking_time = validated_data.get(
             "cooking_time", instance.cooking_time
         )

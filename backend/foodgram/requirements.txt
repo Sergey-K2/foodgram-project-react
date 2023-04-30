@@ -36,3 +36,4 @@ whitenoise
 python-dotenv
 chardet==4.0.0 
 django-filter==2.4.0
+jsonschema==3.0.2
