@@ -5,7 +5,6 @@ from recipes.models import (Favorite, Ingredient, IngredientRecipe, Recipe,
                             ShoppingCart, Subscription, Tag, User)
 from rest_framework import serializers
 from rest_framework.serializers import ModelSerializer
-from rest_framework.validators import UniqueTogetherValidator
 
 
 class IngredientSerializer(ModelSerializer):
