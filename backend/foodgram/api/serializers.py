@@ -147,17 +147,24 @@ class CreateUpdateRecipeSerializer(ModelSerializer):
     )
 
     def update(self, instance, validated_data):
-        instance.author = validated_data.get("author", instance.author)
-        instance.name = validated_data.get("name", instance.name)
-        instance.image = validated_data.get("image", instance.image)
-        instance.text = validated_data.get("text", instance.text)
-        instance.cooking_time = validated_data.get(
-            "cooking_time", instance.cooking_time
+        tags = validated_data.pop("tags", None)
+        if tags is not None:
+            instance.tags.set(tags)
+        ingredients = validated_data.pop("ingredients", None)
+        if ingredients is not None:
+            instance.ingredients.clear()
+        instance = super().update(instance, validated_data)
+        IngredientRecipe.objects.bulk_create(
+            [
+                IngredientRecipe(
+                    ingredient=Ingredient.objects.get(id=ingredient["id"]),
+                    recipe=instance,
+                    amount=ingredient.get("amount"),
+                )
+                for ingredient in ingredients
+            ],
+            batch_size=999,
         )
-        instance.tags.clear()
-        instance.tags = self.initial_data.get("tags")
-        instance.ingredients.clear()
-        instance.ingredients = self.initial_data.get("ingredients")
         instance.save()
         return instance
 
@@ -186,7 +193,7 @@ class CreateUpdateRecipeSerializer(ModelSerializer):
 
 
 class CreateUpdateIngredientRecipeSerializer(serializers.ModelSerializer):
-    id = serializers.IntegerField()
+    id = serializers.PrimaryKeyRelatedField(queryset=Ingredient.objects.all())
     amount = serializers.IntegerField(
         validators=(
             MinValueValidator(
@@ -196,5 +203,13 @@ class CreateUpdateIngredientRecipeSerializer(serializers.ModelSerializer):
     )
 
     class Meta:
-        model = Ingredient
+        model = IngredientRecipe
         fields = ("id", "amount")
+
+
+class RecipeShortSerializer(ModelSerializer):
+    image = Base64ImageField()
+
+    class Meta:
+        model = Recipe
+        fields = ("id", "name", "image", "cooking_time")

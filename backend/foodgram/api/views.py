@@ -12,10 +12,10 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet, ModelViewSet
 
-from .permissions import IsAuthorOrReadOnly
+from .permissions import AuthenticatedOrAuthorOrReadOnly
 from .serializers import (CreateUpdateRecipeSerializer, IngredientSerializer,
-                          RecipeSerializer, SubscriptionSerializer,
-                          TagSerializer)
+                          RecipeSerializer, RecipeShortSerializer,
+                          SubscriptionSerializer, TagSerializer)
 
 
 class ListRetrieveViewSet(
@@ -41,7 +41,7 @@ class CreateDeleteViewSet(
 
 class RecipeViewSet(ModelViewSet):
     queryset = Recipe.objects.all()
-    permission_classes = (IsAuthorOrReadOnly,)
+    permission_classes = (AuthenticatedOrAuthorOrReadOnly,)
     pagination_class = LimitOffsetPagination
 
     def perform_create(self, serializer):
@@ -75,7 +75,7 @@ class RecipeViewSet(ModelViewSet):
                 )
 
             Favorite.objects.create(user=user, recipe=recipe)
-            serializer = RecipeSerializer(recipe, many=True)
+            serializer = RecipeShortSerializer(recipe, many=True)
             return Response(serializer.data)
 
     @action(
@@ -101,7 +101,7 @@ class RecipeViewSet(ModelViewSet):
                     "Рецепт уже добавлен в список покупок!"
                 )
             ShoppingCart.objects.create(user=user, recipe=recipe)
-            serializer = RecipeSerializer(recipe, many=True)
+            serializer = RecipeShortSerializer(recipe, many=True)
             return Response(serializer.data)
 
     @action(
@@ -171,9 +171,9 @@ class UsersSubscriptionViewSet(UserViewSet):
         detail=True,
         methods=("post", "delete"),
     )
-    def subscribe(self, request, pk=None):
+    def subscribe(self, request, id):
         user = self.request.user
-        author = get_object_or_404(User, pk=pk)
+        author = get_object_or_404(User, pk=id)
 
         if self.request.method == "POST":
             if Subscription.objects.filter(user=user, author=author).exists():
