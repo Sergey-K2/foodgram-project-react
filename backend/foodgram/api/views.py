@@ -183,7 +183,7 @@ class UsersSubscriptionViewSet(UserViewSet):
             serializer = SubscriptionSerializer(
                 author, data=request.data, context={"request": request}
             )
-
+            serializer.is_valid(raise_exception=True)
             return Response(serializer.data)
 
         if self.request.method == "DELETE":

@@ -113,7 +113,7 @@ class SubscriptionSerializer(CustomUserSerializer):
 
 
 class IngredientRecipeSerializer(ModelSerializer):
-    id = serializers.PrimaryKeyRelatedField(queryset=Ingredient.objects.all())
+    id = serializers.IntegerField(write_only=True)
     amount = serializers.IntegerField(
         validators=(
             MinValueValidator(
@@ -144,12 +144,12 @@ class CreateUpdateRecipeSerializer(ModelSerializer):
 
     def update(self, instance, validated_data):
         tags = validated_data.pop("tags", None)
+        ingredients = validated_data.pop("ingredients", None)
+        instance = super().update(instance, validated_data)
         if tags is not None:
             instance.tags.set(tags)
-        ingredients = validated_data.pop("ingredients", None)
         if ingredients is not None:
             instance.ingredients.clear()
-        instance = super().update(instance, validated_data)
         IngredientRecipe.objects.bulk_create(
             [
                 IngredientRecipe(
@@ -182,6 +182,11 @@ class CreateUpdateRecipeSerializer(ModelSerializer):
         )
         recipe.save()
         return recipe
+
+    def to_representation(self, instance):
+        request = self.context.get("request")
+        context = {"request": request}
+        return RecipeSerializer(instance, context=context).data
 
     class Meta:
         model = Recipe
