@@ -48,8 +48,8 @@ class CustomUserSerializer(UserSerializer):
         return Subscription.objects.filter(
             user=self.context["request"].user, author=obj
         ).exists()
-    
-    
+
+
 class CustomUserCreateSerializer(UserCreateSerializer):
     class Meta:
         model = User
@@ -70,6 +70,7 @@ class CurrentUserDefaultId(object):
         if serializer_instance is not None:
             self.user_id = serializer_instance.context["request"].user.id
             return self.user_id
+
 
 class RecipeSerializer(ModelSerializer):
     author = CustomUserSerializer(read_only=True)
