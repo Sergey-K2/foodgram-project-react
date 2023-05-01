@@ -14,7 +14,7 @@ from rest_framework.viewsets import GenericViewSet, ModelViewSet
 
 from .permissions import AuthenticatedOrAuthorOrReadOnly
 from .serializers import (CreateUpdateRecipeSerializer, IngredientSerializer,
-                          RecipeSerializer, RecipeShortSerializer,
+                          RecipeLimitedSerializer, RecipeSerializer,
                           SubscriptionSerializer, TagSerializer)
 
 
@@ -60,7 +60,7 @@ class RecipeViewSet(ModelViewSet):
     )
     def favorite(self, request, pk):
         user = self.request.user
-        recipe = get_object_or_404(Recipe, pk=pk)
+        recipe = get_object_or_404(Recipe, id=pk)
 
         if self.request.method == "DELETE":
             if not Favorite.objects.filter(user=user, recipe=recipe).exists():
@@ -75,7 +75,7 @@ class RecipeViewSet(ModelViewSet):
                 )
 
             Favorite.objects.create(user=user, recipe=recipe)
-            serializer = RecipeShortSerializer(recipe, many=True)
+            serializer = RecipeLimitedSerializer(recipe, many=True)
             return Response(serializer.data)
 
     @action(
@@ -101,7 +101,7 @@ class RecipeViewSet(ModelViewSet):
                     "Рецепт уже добавлен в список покупок!"
                 )
             ShoppingCart.objects.create(user=user, recipe=recipe)
-            serializer = RecipeShortSerializer(recipe, many=True)
+            serializer = RecipeLimitedSerializer(recipe, many=True)
             return Response(serializer.data)
 
     @action(
@@ -180,7 +180,9 @@ class UsersSubscriptionViewSet(UserViewSet):
                 raise exceptions.ValidationError("Подписка уже оформлена.")
 
             Subscription.objects.create(user=user, author=author)
-            serializer = self.get_serializer(author)
+            serializer = SubscriptionSerializer(
+                author, data=request.data, context={"request": request}
+            )
 
             return Response(serializer.data)
 
@@ -193,3 +195,4 @@ class UsersSubscriptionViewSet(UserViewSet):
                 Subscription, user=user, author=author
             )
             subscription.delete()
+            return Response("Подписка удалена")
