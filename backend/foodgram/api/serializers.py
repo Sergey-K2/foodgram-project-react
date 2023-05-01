@@ -1,16 +1,8 @@
 from django.core.validators import MinValueValidator
 from djoser.serializers import UserCreateSerializer, UserSerializer
 from drf_base64.fields import Base64ImageField
-from recipes.models import (
-    Favorite,
-    Ingredient,
-    IngredientRecipe,
-    Recipe,
-    ShoppingCart,
-    Subscription,
-    Tag,
-    User,
-)
+from recipes.models import (Favorite, Ingredient, IngredientRecipe, Recipe,
+                            ShoppingCart, Subscription, Tag, User)
 from rest_framework import serializers
 from rest_framework.serializers import ModelSerializer
 from rest_framework.validators import UniqueTogetherValidator
@@ -33,10 +25,54 @@ class TagSerializer(ModelSerializer):
         )
 
 
-class RecipeSerializer(ModelSerializer):
-    author = serializers.SlugRelatedField(
-        slug_field="author", many=True, read_only=True
+class CustomUserSerializer(UserSerializer):
+    is_subscribed = serializers.SerializerMethodField(
+        read_only=True, method_name="get_is_subscribed"
     )
+
+    class Meta:
+        model = User
+        fields = (
+            "id",
+            "email",
+            "username",
+            "first_name",
+            "last_name",
+            "is_subscribed",
+        )
+
+    def get_is_subscribed(self, obj):
+        request = self.context.get("request")
+        if not request or request.user.is_anonymous:
+            return False
+        return Subscription.objects.filter(
+            user=self.context["request"].user, author=obj
+        ).exists()
+    
+    
+class CustomUserCreateSerializer(UserCreateSerializer):
+    class Meta:
+        model = User
+        fields = (
+            "id",
+            "email",
+            "username",
+            "password",
+            "first_name",
+            "last_name",
+        )
+
+
+class CurrentUserDefaultId(object):
+    requires_context = True
+
+    def __call__(self, serializer_instance=None):
+        if serializer_instance is not None:
+            self.user_id = serializer_instance.context["request"].user.id
+            return self.user_id
+
+class RecipeSerializer(ModelSerializer):
+    author = CustomUserSerializer(read_only=True)
     tags = TagSerializer(many=True)
     ingredients = IngredientSerializer(many=True)
     image = Base64ImageField()
@@ -86,59 +122,12 @@ class SubscriptionSerializer(ModelSerializer):
         return following
 
 
-class CustomUserCreateSerializer(UserCreateSerializer):
-    class Meta:
-        model = User
-        fields = (
-            "id",
-            "email",
-            "username",
-            "password",
-            "first_name",
-            "last_name",
-        )
-
-
-class CustomUserSerializer(UserSerializer):
-    is_subscribed = serializers.SerializerMethodField(
-        read_only=True, method_name="get_is_subscribed"
-    )
-
-    class Meta:
-        model = User
-        fields = (
-            "id",
-            "email",
-            "username",
-            "first_name",
-            "last_name",
-            "is_subscribed",
-        )
-
-    def get_is_subscribed(self, obj):
-        request = self.context.get("request")
-        if not request or request.user.is_anonymous:
-            return False
-        return Subscription.objects.filter(
-            user=self.context["request"].user, author=obj
-        ).exists()
-
-
-class CurrentUserDefaultId(object):
-    requires_context = True
-
-    def __call__(self, serializer_instance=None):
-        if serializer_instance is not None:
-            self.user_id = serializer_instance.context["request"].user.id
-            return self.user_id
-
-
 class IngredientRecipeSerializer(ModelSerializer):
     id = serializers.IntegerField(write_only=True)
 
     class Meta:
         model = IngredientRecipe
-        fields = ("id", "amount")
+        fields = "__all__"
 
 
 class CreateUpdateRecipeSerializer(ModelSerializer):
@@ -185,6 +174,7 @@ class CreateUpdateRecipeSerializer(ModelSerializer):
                 )
                 for ingredient in ingredients
             ],
+            batch_size=999,
         )
         recipe.save()
         return recipe

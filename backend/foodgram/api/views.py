@@ -58,7 +58,7 @@ class RecipeViewSet(ModelViewSet):
         methods=["post", "delete"],
         permission_classes=(IsAuthenticated,),
     )
-    def favorite(self, request, pk=None):
+    def favorite(self, request, pk):
         user = self.request.user
         recipe = get_object_or_404(Recipe, pk=pk)
 
@@ -75,9 +75,7 @@ class RecipeViewSet(ModelViewSet):
                 )
 
             Favorite.objects.create(user=user, recipe=recipe)
-            serializer = RecipeSerializer(
-                recipe, context={"request": request}, many=True
-            )
+            serializer = RecipeSerializer(recipe, many=True)
             return Response(serializer.data)
 
     @action(
@@ -85,7 +83,7 @@ class RecipeViewSet(ModelViewSet):
         methods=["post", "delete"],
         permission_classes=(IsAuthenticated,),
     )
-    def shopping_cart(self, request, pk=None):
+    def shopping_cart(self, request, pk):
         user = self.request.user
         recipe = get_object_or_404(Recipe, pk=pk)
 
@@ -103,9 +101,7 @@ class RecipeViewSet(ModelViewSet):
                     "Рецепт уже добавлен в список покупок!"
                 )
             ShoppingCart.objects.create(user=user, recipe=recipe)
-            serializer = RecipeSerializer(
-                recipe, context={"request": request}, many=True
-            )
+            serializer = RecipeSerializer(recipe, many=True)
             return Response(serializer.data)
 
     @action(
