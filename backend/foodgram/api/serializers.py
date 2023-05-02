@@ -1,4 +1,5 @@
 from django.core.validators import MinValueValidator
+from django.db.models import F
 from djoser.serializers import UserCreateSerializer, UserSerializer
 from drf_base64.fields import Base64ImageField
 from recipes.models import (Favorite, Ingredient, IngredientRecipe, Recipe,
@@ -16,12 +17,7 @@ class IngredientSerializer(ModelSerializer):
 class TagSerializer(ModelSerializer):
     class Meta:
         model = Tag
-        fields = (
-            "id",
-            "name",
-            "color",
-            "slug",
-        )
+        fields = "__all__"
 
 
 class CustomUserSerializer(UserSerializer):
@@ -64,8 +60,8 @@ class CustomUserCreateSerializer(UserCreateSerializer):
 
 class RecipeSerializer(ModelSerializer):
     author = CustomUserSerializer(read_only=True)
-    tags = TagSerializer(many=True)
-    ingredients = IngredientSerializer(many=True)
+    tags = TagSerializer(many=True, read_only=True)
+    ingredients = serializers.SerializerMethodField()
     image = Base64ImageField()
     is_in_favorite = serializers.SerializerMethodField()
     is_in_shopping_cart = serializers.SerializerMethodField()
@@ -73,6 +69,16 @@ class RecipeSerializer(ModelSerializer):
     class Meta:
         model = Recipe
         fields = "__all__"
+
+    def get_ingredients(self, obj):
+        recipe = obj
+        ingredients = recipe.ingredients.values(
+            "id",
+            "name",
+            "measurement_unit",
+            amount=F("ingredientrecipe__amount"),
+        )
+        return ingredients
 
     def get_is_in_favorite(self, obj):
         user = self.context.get("request").user
@@ -96,6 +102,7 @@ class SubscriptionSerializer(CustomUserSerializer):
             "recipes_amount",
             "recipes",
         )
+        read_only_fields = ("username",)
 
     def get_recipes(self, obj):
         request = self.context.get("request")
@@ -103,9 +110,7 @@ class SubscriptionSerializer(CustomUserSerializer):
         recipes = obj.recipes.all()
         if limit:
             recipes = recipes[: int(limit)]
-        serializer = RecipeLimitedSerializer(
-            recipes, many=True, read_only=True
-        )
+        serializer = RecipeSerializer(recipes, many=True, read_only=True)
         return serializer.data
 
     def get_recipes_amount(self, obj):

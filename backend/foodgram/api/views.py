@@ -48,7 +48,7 @@ class RecipeViewSet(ModelViewSet):
         serializer.save(author=self.request.user)
 
     def get_serializer_class(self):
-        if self.action in ("create", "partial_update"):
+        if self.action in ("create", "partial_update", "delete"):
             return CreateUpdateRecipeSerializer
 
         return RecipeSerializer
@@ -75,7 +75,7 @@ class RecipeViewSet(ModelViewSet):
                 )
 
             Favorite.objects.create(user=user, recipe=recipe)
-            serializer = RecipeLimitedSerializer(recipe, many=True)
+            serializer = RecipeSerializer(recipe, many=True)
             return Response(serializer.data)
 
     @action(
@@ -85,7 +85,7 @@ class RecipeViewSet(ModelViewSet):
     )
     def shopping_cart(self, request, pk):
         user = self.request.user
-        recipe = get_object_or_404(Recipe, pk=pk)
+        recipe = get_object_or_404(Recipe, id=pk)
 
         if self.request.method == "DELETE":
             if not ShoppingCart.objects.filter(
@@ -101,7 +101,7 @@ class RecipeViewSet(ModelViewSet):
                     "Рецепт уже добавлен в список покупок!"
                 )
             ShoppingCart.objects.create(user=user, recipe=recipe)
-            serializer = RecipeLimitedSerializer(recipe, many=True)
+            serializer = RecipeSerializer(recipe, many=True)
             return Response(serializer.data)
 
     @action(
