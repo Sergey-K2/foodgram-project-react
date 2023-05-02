@@ -42,7 +42,7 @@ class CreateDeleteViewSet(
 class RecipeViewSet(ModelViewSet):
     queryset = Recipe.objects.all()
     permission_classes = (AuthenticatedOrAuthorOrReadOnly,)
-    pagination_class = LimitOffsetPagination
+    pagination_class = (LimitOffsetPagination,)
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
