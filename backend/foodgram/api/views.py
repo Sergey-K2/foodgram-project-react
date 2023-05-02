@@ -3,8 +3,16 @@ from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from djoser.views import UserViewSet
-from recipes.models import (Favorite, Ingredient, IngredientRecipe, Recipe,
-                            ShoppingCart, Subscription, Tag, User)
+from recipes.models import (
+    Favorite,
+    Ingredient,
+    IngredientRecipe,
+    Recipe,
+    ShoppingCart,
+    Subscription,
+    Tag,
+    User,
+)
 from rest_framework import exceptions, filters, mixins
 from rest_framework.decorators import action
 from rest_framework.pagination import LimitOffsetPagination
@@ -12,10 +20,15 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet, ModelViewSet
 
+from .filters import IngredientFilter, RecipeFilter
 from .permissions import AuthenticatedOrAuthorOrReadOnly
-from .serializers import (CreateUpdateRecipeSerializer, IngredientSerializer,
-                          RecipeSerializer, SubscriptionSerializer,
-                          TagSerializer)
+from .serializers import (
+    CreateUpdateRecipeSerializer,
+    IngredientSerializer,
+    RecipeSerializer,
+    SubscriptionSerializer,
+    TagSerializer,
+)
 
 
 class ListRetrieveViewSet(
@@ -43,6 +56,8 @@ class RecipeViewSet(ModelViewSet):
     queryset = Recipe.objects.all()
     permission_classes = (AuthenticatedOrAuthorOrReadOnly,)
     pagination_class = LimitOffsetPagination
+    filter_backends = (DjangoFilterBackend,)
+    filterset_class = RecipeFilter
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
@@ -59,7 +74,7 @@ class RecipeViewSet(ModelViewSet):
         permission_classes=(IsAuthenticated,),
     )
     def favorite(self, request, pk):
-        user = self.request.user
+        user = request.user
         recipe = get_object_or_404(Recipe, id=pk)
 
         if self.request.method == "DELETE":
@@ -84,7 +99,7 @@ class RecipeViewSet(ModelViewSet):
         permission_classes=(IsAuthenticated,),
     )
     def shopping_cart(self, request, pk):
-        user = self.request.user
+        user = request.user
         recipe = get_object_or_404(Recipe, id=pk)
 
         if self.request.method == "DELETE":
@@ -145,6 +160,7 @@ class IngredientViewSet(ListRetrieveViewSet):
     pagination_class = None
     filter_backends = (DjangoFilterBackend, filters.SearchFilter)
     search_fields = ("^name",)
+    filterset_class = IngredientFilter
 
 
 class UsersSubscriptionViewSet(UserViewSet):
@@ -171,9 +187,9 @@ class UsersSubscriptionViewSet(UserViewSet):
         detail=True,
         methods=("post", "delete"),
     )
-    def subscribe(self, request, id):
+    def subscribe(self, request, pk):
         user = request.user
-        author = get_object_or_404(User, pk=id)
+        author = get_object_or_404(User, id=pk)
 
         if self.request.method == "POST":
             if Subscription.objects.filter(user=user, author=author).exists():
