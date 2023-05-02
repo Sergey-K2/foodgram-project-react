@@ -172,7 +172,7 @@ class UsersSubscriptionViewSet(UserViewSet):
         methods=("post", "delete"),
     )
     def subscribe(self, request, id):
-        user = self.request.user
+        user = request.user
         author = get_object_or_404(User, pk=id)
 
         if self.request.method == "POST":
