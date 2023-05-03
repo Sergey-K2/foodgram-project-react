@@ -3,8 +3,16 @@ from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from djoser.views import UserViewSet
-from recipes.models import (CustomUser, Favorite, Ingredient, IngredientRecipe,
-                            Recipe, ShoppingCart, Subscription, Tag)
+from recipes.models import (
+    CustomUser,
+    Favorite,
+    Ingredient,
+    IngredientRecipe,
+    Recipe,
+    ShoppingCart,
+    Subscription,
+    Tag,
+)
 from rest_framework import exceptions, filters, mixins
 from rest_framework.decorators import action
 from rest_framework.pagination import LimitOffsetPagination
@@ -14,9 +22,14 @@ from rest_framework.viewsets import GenericViewSet, ModelViewSet
 
 from .filters import IngredientFilter, RecipeFilter
 from .permissions import AuthenticatedOrAuthorOrReadOnly
-from .serializers import (CreateUpdateRecipeSerializer, CustomUserSerializer,
-                          IngredientSerializer, RecipeSerializer,
-                          SubscriptionSerializer, TagSerializer)
+from .serializers import (
+    CreateUpdateRecipeSerializer,
+    CustomUserSerializer,
+    IngredientSerializer,
+    RecipeSerializer,
+    SubscriptionSerializer,
+    TagSerializer,
+)
 
 
 class ListRetrieveViewSet(
@@ -124,7 +137,7 @@ class RecipeViewSet(ModelViewSet):
         )
         text = "Перечень ингредиентов для рецептов: \n"
         for element in shopping_list:
-            ingredient = Ingredient.objects.get(pk=element["ingredient"])
+            ingredient = Ingredient.objects.get(pk=element["ingredient_list"])
             text += (
                 f"{ingredient.name} ({ingredient.measurement_unit})"
                 f" - {ingredient.amount}\n"
