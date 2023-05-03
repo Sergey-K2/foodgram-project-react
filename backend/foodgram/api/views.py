@@ -131,13 +131,11 @@ class RecipeViewSet(ModelViewSet):
                 for element in shopping_list
             ]
         )
-        return HttpResponse(
-            list_of_ingredients,
-            content_type="text/plain",
-            headers={
-                "Content-Disposition": "attachment; filename=shopping-list.txt"
-            },
-        )
+        response = HttpResponse(list_of_ingredients, content_type="text/plain")
+        response[
+            "Content-Disposition"
+        ] = f"attachment; filename=list_of_ingredients.txt"
+        return response
 
 
 class TagViewSet(ListRetrieveViewSet):
