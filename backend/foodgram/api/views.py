@@ -14,9 +14,10 @@ from rest_framework.viewsets import GenericViewSet, ModelViewSet
 
 from .filters import IngredientFilter, RecipeFilter
 from .permissions import AuthenticatedOrAuthorOrReadOnly
-from .serializers import (CreateUpdateRecipeSerializer, IngredientSerializer,
-                          RecipeLimitedSerializer, RecipeSerializer,
-                          SubscriptionSerializer, TagSerializer)
+from .serializers import (CreateUpdateRecipeSerializer, CustomUserSerializer,
+                          IngredientSerializer, RecipeLimitedSerializer,
+                          RecipeSerializer, SubscriptionSerializer,
+                          TagSerializer)
 
 
 class ListRetrieveViewSet(
@@ -156,7 +157,8 @@ class IngredientViewSet(ListRetrieveViewSet):
 
 
 class UsersSubscriptionViewSet(UserViewSet):
-    serializer_class = SubscriptionSerializer
+    queryset = CustomUser.objects.all()
+    serializer_class = CustomUserSerializer
     permission_classes = (IsAuthenticated,)
     filter_backends = (filters.SearchFilter,)
     search_fields = ("following__username", "user__username")

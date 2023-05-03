@@ -184,7 +184,6 @@ class CreateUpdateRecipeSerializer(ModelSerializer):
             ],
             batch_size=999,
         )
-        recipe.save()
         return recipe
 
     def to_representation(self, instance):
