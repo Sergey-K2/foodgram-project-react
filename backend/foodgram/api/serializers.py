@@ -37,8 +37,8 @@ class CustomUserSerializer(UserSerializer):
         )
 
     def get_is_subscribed(self, obj):
-        request = self.context.get("request")
-        if not request or request.user.is_anonymous:
+        user = self.context.get("request").user
+        if user.is_anonymous:
             return False
         return Subscription.objects.filter(
             user=self.context["request"].user, author=obj
@@ -110,7 +110,9 @@ class SubscriptionSerializer(CustomUserSerializer):
         recipes = obj.recipes.all()
         if limit:
             recipes = recipes[: int(limit)]
-        serializer = RecipeSerializer(recipes, many=True, read_only=True)
+        serializer = RecipeLimitedSerializer(
+            recipes, many=True, read_only=True
+        )
         return serializer.data
 
     def get_recipes_amount(self, obj):
