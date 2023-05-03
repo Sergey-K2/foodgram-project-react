@@ -79,7 +79,8 @@ class RecipeViewSet(ModelViewSet):
 
             Favorite.objects.create(user=user, recipe=recipe)
             serializer = CreateUpdateRecipeSerializer(
-                recipe, context={"request": request}, many=True
+                recipe,
+                context={"request": request},
             )
             return Response(serializer.data)
 
@@ -107,7 +108,8 @@ class RecipeViewSet(ModelViewSet):
                 )
             ShoppingCart.objects.create(user=user, recipe=recipe)
             serializer = CreateUpdateRecipeSerializer(
-                recipe, context={"request": request}, many=True
+                recipe,
+                context={"request": request},
             )
             return Response(serializer.data)
 
