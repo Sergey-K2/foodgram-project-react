@@ -15,9 +15,8 @@ from rest_framework.viewsets import GenericViewSet, ModelViewSet
 from .filters import IngredientFilter, RecipeFilter
 from .permissions import AuthenticatedOrAuthorOrReadOnly
 from .serializers import (CreateUpdateRecipeSerializer, CustomUserSerializer,
-                          IngredientSerializer, RecipeLimitedSerializer,
-                          RecipeSerializer, SubscriptionSerializer,
-                          TagSerializer)
+                          IngredientSerializer, RecipeSerializer,
+                          SubscriptionSerializer, TagSerializer)
 
 
 class ListRetrieveViewSet(
