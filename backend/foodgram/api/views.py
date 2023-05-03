@@ -169,7 +169,7 @@ class UsersSubscriptionViewSet(UserViewSet):
         methods=["get"],
     )
     def subscriptions(self, request):
-        user = request.user
+        user = self.request.user
         queryset = CustomUser.objects.filter(following__user=user)
         pages = self.paginate_queryset(queryset)
         serializer = SubscriptionSerializer(
@@ -182,7 +182,7 @@ class UsersSubscriptionViewSet(UserViewSet):
         methods=("post", "delete"),
     )
     def subscribe(self, request, **kwargs):
-        user = request.user
+        user = self.request.user
         author = get_object_or_404(CustomUser, id=self.kwargs.get("id"))
 
         if self.request.method == "POST":
