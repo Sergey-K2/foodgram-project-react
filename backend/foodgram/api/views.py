@@ -3,16 +3,8 @@ from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from djoser.views import UserViewSet
-from recipes.models import (
-    CustomUser,
-    Favorite,
-    Ingredient,
-    IngredientRecipe,
-    Recipe,
-    ShoppingCart,
-    Subscription,
-    Tag,
-)
+from recipes.models import (CustomUser, Favorite, Ingredient, IngredientRecipe,
+                            Recipe, ShoppingCart, Subscription, Tag)
 from rest_framework import exceptions, filters, mixins
 from rest_framework.decorators import action
 from rest_framework.pagination import LimitOffsetPagination
@@ -22,15 +14,10 @@ from rest_framework.viewsets import GenericViewSet, ModelViewSet
 
 from .filters import IngredientFilter, RecipeFilter
 from .permissions import AuthenticatedOrAuthorOrReadOnly
-from .serializers import (
-    CreateUpdateRecipeSerializer,
-    CustomUserSerializer,
-    IngredientSerializer,
-    RecipeLimitedSerializer,
-    RecipeSerializer,
-    SubscriptionSerializer,
-    TagSerializer,
-)
+from .serializers import (CreateUpdateRecipeSerializer, CustomUserSerializer,
+                          IngredientSerializer, RecipeLimitedSerializer,
+                          RecipeSerializer, SubscriptionSerializer,
+                          TagSerializer)
 
 
 class ListRetrieveViewSet(
@@ -92,7 +79,7 @@ class RecipeViewSet(ModelViewSet):
                 )
 
             Favorite.objects.create(user=user, recipe=recipe)
-            serializer = RecipeLimitedSerializer(
+            serializer = CreateUpdateRecipeSerializer(
                 recipe, context={"request": request}, many=True
             )
             return Response(serializer.data)
@@ -120,7 +107,7 @@ class RecipeViewSet(ModelViewSet):
                     "Рецепт уже добавлен в список покупок!"
                 )
             ShoppingCart.objects.create(user=user, recipe=recipe)
-            serializer = RecipeLimitedSerializer(
+            serializer = CreateUpdateRecipeSerializer(
                 recipe, context={"request": request}, many=True
             )
             return Response(serializer.data)
