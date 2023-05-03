@@ -160,3 +160,5 @@ DJOSER = {
     },
     "HIDE_USERS": False,
 }
+
+AUTH_USER_MODEL = "recipes.CustomUser"
