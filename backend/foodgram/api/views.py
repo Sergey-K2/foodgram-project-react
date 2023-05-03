@@ -110,25 +110,25 @@ class RecipeViewSet(ModelViewSet):
             serializer = RecipeLimitedSerializer(
                 recipe, context={"request": request}, many=True
             )
-            return Response(serializer.data)
-
     @action(
-        detail=True, methods=["get"], permission_classes=(IsAuthenticated,)
+        detail=False, permission_classes=(IsAuthenticated,)
     )
     def download_shopping_cart(self, request):
         shopping_cart = ShoppingCart.objects.filter(user=self.request.user)
         recipes = [element.recipe.id for element in shopping_cart]
         shopping_list = (
             IngredientRecipe.objects.filter(recipe__in=recipes)
-            .values("ingredient")
-            .annotate(amount=Sum("amount"))
+            .values(
+            'ingredient__name',
+            'ingredient__measurement_unit'
+        ).annotate(amount=Sum('amount'))
         )
         text = "Перечень ингредиентов для рецептов: \n"
         for element in shopping_list:
             ingredient = Ingredient.objects.get(pk=element["ingredient"])
             text += (
                 f"{ingredient.name} ({ingredient.measurement_unit})"
-                f" - {element.amount}\n"
+                f" - {ingredient.amount}\n"
             )
         return HttpResponse(
             text,
@@ -136,7 +136,7 @@ class RecipeViewSet(ModelViewSet):
             headers={
                 "Content-Disposition": "attachment; filename=shopping-list.txt"
             },
-        )
+        )         return Response(serializer.data)
 
 
 class TagViewSet(ListRetrieveViewSet):
