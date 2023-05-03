@@ -1,7 +1,26 @@
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import AbstractUser
 from django.db import models
 
-User = get_user_model()
+
+class CustomUser(AbstractUser):
+    USERNAME_FIELD = "email"
+    REQUIRED_FIELDS = [
+        "username",
+        "first_name",
+        "last_name",
+    ]
+    email = models.EmailField(
+        "email address",
+        unique=True,
+    )
+
+    class Meta:
+        verbose_name = "Пользователь"
+        verbose_name_plural = "Пользователи"
+
+    def __str__(self):
+        return self.username
 
 
 class Tag(models.Model):
@@ -37,7 +56,7 @@ class Ingredient(models.Model):
 
 class Recipe(models.Model):
     author = models.ForeignKey(
-        User,
+        CustomUser,
         on_delete=models.CASCADE,
         related_name="recipes",
         verbose_name="Автор",
@@ -90,13 +109,13 @@ class IngredientRecipe(models.Model):
 
 class Subscription(models.Model):
     user = models.ForeignKey(
-        User,
+        CustomUser,
         on_delete=models.CASCADE,
         related_name="follower",
         verbose_name="Подписчик",
     )
     author = models.ForeignKey(
-        User,
+        CustomUser,
         on_delete=models.CASCADE,
         related_name="following",
         verbose_name="Автор",
@@ -121,7 +140,7 @@ class Subscription(models.Model):
 
 class Favorite(models.Model):
     user = models.ForeignKey(
-        User,
+        CustomUser,
         on_delete=models.CASCADE,
         related_name="favorites",
         verbose_name="Пользователь",
@@ -139,8 +158,7 @@ class Favorite(models.Model):
         verbose_name_plural = "Рецепты в избранном"
         constraints = (
             models.UniqueConstraint(
-                fields=('user', 'recipe'),
-                name='unique_favorite_recipe'
+                fields=("user", "recipe"), name="unique_favorite_recipe"
             ),
         )
 
@@ -171,8 +189,7 @@ class ShoppingCart(models.Model):
         verbose_name_plural = "Рецепты в списке покупок"
         constraints = (
             models.UniqueConstraint(
-                fields=('user', 'recipe'),
-                name='unique_shopping_list_recipe'
+                fields=("user", "recipe"), name="unique_shopping_list_recipe"
             ),
         )
 

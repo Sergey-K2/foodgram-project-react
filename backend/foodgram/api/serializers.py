@@ -2,8 +2,8 @@ from django.core.validators import MinValueValidator
 from django.db.models import F
 from djoser.serializers import UserCreateSerializer, UserSerializer
 from drf_base64.fields import Base64ImageField
-from recipes.models import (Favorite, Ingredient, IngredientRecipe, Recipe,
-                            ShoppingCart, Subscription, Tag, User)
+from recipes.models import (CustomUser, Favorite, Ingredient, IngredientRecipe,
+                            Recipe, ShoppingCart, Subscription, Tag)
 from rest_framework import serializers
 from rest_framework.serializers import ModelSerializer
 
@@ -26,7 +26,7 @@ class CustomUserSerializer(UserSerializer):
     )
 
     class Meta:
-        model = User
+        model = CustomUser
         fields = (
             "id",
             "email",
@@ -47,7 +47,7 @@ class CustomUserSerializer(UserSerializer):
 
 class CustomUserCreateSerializer(UserCreateSerializer):
     class Meta:
-        model = User
+        model = CustomUser
         fields = (
             "id",
             "email",
