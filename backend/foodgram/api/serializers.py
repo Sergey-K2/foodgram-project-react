@@ -166,6 +166,7 @@ class CreateUpdateRecipeSerializer(ModelSerializer):
                 )
                 for ingredient in ingredients
             ],
+            batch_size=999,
         )
         instance.save()
         return instance
@@ -184,6 +185,7 @@ class CreateUpdateRecipeSerializer(ModelSerializer):
                 )
                 for ingredient in ingredients
             ],
+            batch_size=999,
         )
         return recipe
 
