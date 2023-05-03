@@ -97,11 +97,16 @@ class TagRecipe(models.Model):
 
 
 class IngredientRecipe(models.Model):
-    ingredient = models.ForeignKey(Ingredient, on_delete=models.PROTECT)
+    ingredient = models.ForeignKey(
+        Ingredient, related_name="ingredient_list", on_delete=models.PROTECT
+    )
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)
     amount = models.PositiveSmallIntegerField(
         verbose_name="Количество", null=True
     )
+
+    class Meta:
+        verbose_name = "Ингредиент для рецепта"
 
 
 class Subscription(models.Model):
@@ -170,7 +175,7 @@ class ShoppingCart(models.Model):
     user = models.ForeignKey(
         CustomUser,
         on_delete=models.CASCADE,
-        related_name="added_to_cart",
+        related_name="shopping_cart",
         verbose_name="Пользователь",
     )
     recipe = models.ForeignKey(
