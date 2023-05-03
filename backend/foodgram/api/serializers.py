@@ -1,9 +1,18 @@
 from django.core.validators import MinValueValidator
+from django.db import transaction
 from django.db.models import F
 from djoser.serializers import UserCreateSerializer, UserSerializer
 from drf_base64.fields import Base64ImageField
-from recipes.models import (CustomUser, Favorite, Ingredient, IngredientRecipe,
-                            Recipe, ShoppingCart, Subscription, Tag)
+from recipes.models import (
+    CustomUser,
+    Favorite,
+    Ingredient,
+    IngredientRecipe,
+    Recipe,
+    ShoppingCart,
+    Subscription,
+    Tag,
+)
 from rest_framework import serializers
 from rest_framework.serializers import ModelSerializer
 
@@ -149,6 +158,7 @@ class CreateUpdateRecipeSerializer(ModelSerializer):
         )
     )
 
+    @transaction.atomic
     def update(self, instance, validated_data):
         tags = validated_data.pop("tags", None)
         ingredients = validated_data.pop("ingredients", None)
@@ -171,6 +181,7 @@ class CreateUpdateRecipeSerializer(ModelSerializer):
         instance.save()
         return instance
 
+    @transaction.atomic
     def create(self, validated_data):
         tags = validated_data.pop("tags")
         ingredients = validated_data.pop("ingredients")
