@@ -4,11 +4,6 @@ from django.db import models
 
 class CustomUser(AbstractUser):
     USERNAME_FIELD = "email"
-    REQUIRED_FIELDS = [
-        "username",
-        "first_name",
-        "last_name",
-    ]
     email = models.EmailField(
         "email address",
         unique=True,
@@ -147,7 +142,7 @@ class Favorite(models.Model):
     recipe = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,
-        related_name="users_favorites",
+        related_name="favorites",
         verbose_name="Рецепт",
     )
     added = models.DateTimeField("Дата и время публикации", auto_now_add=True)
@@ -178,7 +173,7 @@ class ShoppingCart(models.Model):
     recipe = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,
-        related_name="in_users_shopping_carts",
+        related_name="shopping_carts",
         verbose_name="Рецепт в списке покупок",
     )
     added = models.DateTimeField("Дата и время публикации", auto_now_add=True)
