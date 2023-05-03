@@ -74,7 +74,6 @@ class Recipe(models.Model):
     )
     tags = models.ManyToManyField(
         Tag,
-        through="TagRecipe",
         related_name="recipe",
         verbose_name="Тег",
     )
@@ -89,11 +88,6 @@ class Recipe(models.Model):
 
     def __str__(self):
         return self.name
-
-
-class TagRecipe(models.Model):
-    tag = models.ForeignKey(Tag, on_delete=models.CASCADE)
-    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)
 
 
 class IngredientRecipe(models.Model):
