@@ -1,5 +1,5 @@
 from django.contrib.auth.models import AbstractUser
-from django.core.validators import MinValueValidator
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 
 
@@ -85,6 +85,9 @@ class Recipe(models.Model):
                 1,
                 message="Время приготовления должно быть больше нуля!",
             ),
+            MaxValueValidator(
+                32000, message="Количество не должно быть больше 32000!"
+            ),
         ),
         verbose_name="Время приготовления",
     )
@@ -108,11 +111,14 @@ class IngredientRecipe(models.Model):
         Ingredient, related_name="ingredient_list", on_delete=models.PROTECT
     )
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)
-    amount = models.BigIntegerField(
+    amount = models.PositiveSmallIntegerField(
         validators=(
             MinValueValidator(
                 1,
                 message="Количество должно быть больше нуля!",
+            ),
+            MaxValueValidator(
+                32000, message="Количество не должно быть больше 32000!"
             ),
         ),
         verbose_name="Количество",

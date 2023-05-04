@@ -1,4 +1,4 @@
-from django.core.validators import MinValueValidator
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db.models import F
 from djoser.serializers import UserCreateSerializer, UserSerializer
 from drf_base64.fields import Base64ImageField
@@ -127,6 +127,9 @@ class IngredientRecipeSerializer(ModelSerializer):
             MinValueValidator(
                 1, message="Минимальное количество ингредиентов = 1"
             ),
+            MaxValueValidator(
+                32000, message="Количество не должно быть больше 32000!"
+            ),
         )
     )
 
@@ -201,17 +204,22 @@ class CreateUpdateRecipeSerializer(ModelSerializer):
 
     @staticmethod
     def validate_cooking_time(value):
-        if value <= 0:
+        if 32000 < value <= 0:
             raise ValidationError(
-                "Время приготовления должно быть больше нуля!"
+                "Время приготовления должно быть больше нуля и меньше 32000!"
             )
         return value
 
     def validate_ingredients(self, ingredients):
         for item in ingredients:
-            if int(item["amount"]) <= 0:
+            if 32000 < int(item["amount"]) <= 0:
                 raise ValidationError(
-                    {"amount": "Количество ингредиента должно быть больше 0!"}
+                    {
+                        "amount": (
+                            "Количество ингредиента должно"
+                            "быть в интервале от 0 до 32 000!"
+                        )
+                    }
                 )
         return ingredients
 
