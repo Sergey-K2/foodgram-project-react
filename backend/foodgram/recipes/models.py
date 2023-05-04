@@ -79,7 +79,7 @@ class Recipe(models.Model):
         related_name="recipe",
         verbose_name="Тег",
     )
-    cooking_time = models.BigIntegerField(
+    cooking_time = models.PositiveBigIntegerField(
         validators=(
             MinValueValidator(
                 1,
@@ -108,7 +108,7 @@ class IngredientRecipe(models.Model):
         Ingredient, related_name="ingredient_list", on_delete=models.PROTECT
     )
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)
-    amount = models.BigIntegerField(
+    amount = models.PositiveBigIntegerField(
         validators=(
             MinValueValidator(
                 1,
