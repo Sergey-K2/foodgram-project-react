@@ -63,7 +63,7 @@ class RecipeSerializer(ModelSerializer):
     tags = TagSerializer(many=True, read_only=True)
     ingredients = serializers.SerializerMethodField()
     image = Base64ImageField()
-    is_in_favorite = serializers.SerializerMethodField()
+    is_favorited = serializers.SerializerMethodField()
     is_in_shopping_cart = serializers.SerializerMethodField()
 
     class Meta:
@@ -80,7 +80,7 @@ class RecipeSerializer(ModelSerializer):
         )
         return ingredients
 
-    def get_is_in_favorite(self, obj):
+    def get_is_favorited(self, obj):
         user = self.context.get("request").user
         if user.is_anonymous:
             return False
