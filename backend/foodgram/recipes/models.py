@@ -107,6 +107,9 @@ class IngredientRecipe(models.Model):
 
     class Meta:
         verbose_name = "Ингредиент для рецепта"
+        constraints = models.CheckConstraint(
+            check=models.Q(amount__gte=1), name="amount_gte_1"
+        )
 
 
 class Subscription(models.Model):
