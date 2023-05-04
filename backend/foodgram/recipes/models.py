@@ -120,9 +120,6 @@ class IngredientRecipe(models.Model):
 
     class Meta:
         verbose_name = "Ингредиент для рецепта"
-        constraints = models.CheckConstraint(
-            check=models.Q(amount__gte=1), name="amount_gte_1"
-        )
 
 
 class Subscription(models.Model):
@@ -140,6 +137,12 @@ class Subscription(models.Model):
     )
 
     class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["user", "author"],
+                name="User can't subscribe on himself",
+            )
+        ]
         verbose_name = "Подписка"
         verbose_name_plural = "Подписки"
 
