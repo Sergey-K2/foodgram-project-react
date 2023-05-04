@@ -149,7 +149,11 @@ class CreateUpdateRecipeSerializer(ModelSerializer):
         validators=(
             MinValueValidator(
                 1, message="Минимальное время приготовления = 1."
+            ),            
+            MaxValueValidator(
+                32000, message="Количество не должно быть больше 32000!"
             ),
+        )
         )
     )
 
