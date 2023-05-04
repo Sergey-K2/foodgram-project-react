@@ -13,6 +13,7 @@ from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet, ModelViewSet
 
 from .filters import IngredientFilter, RecipeFilter
+from .pagination import FoodgramPagination
 from .permissions import AuthenticatedOrAuthorOrReadOnly
 from .serializers import (CreateUpdateRecipeSerializer, CustomUserSerializer,
                           IngredientSerializer, RecipeSerializer,
@@ -43,7 +44,7 @@ class CreateDeleteViewSet(
 class RecipeViewSet(ModelViewSet):
     queryset = Recipe.objects.all()
     permission_classes = (AuthenticatedOrAuthorOrReadOnly,)
-    pagination_class = LimitOffsetPagination
+    pagination_class = FoodgramPagination
     filter_backends = (DjangoFilterBackend,)
     filterset_class = RecipeFilter
 

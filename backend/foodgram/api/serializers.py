@@ -138,9 +138,7 @@ class IngredientRecipeSerializer(ModelSerializer):
         for item in ingredients:
             if int(item["amount"]) <= 0:
                 raise ValidationError(
-                    {
-                        "amount": "Количество ингредиента не может быть меньше 0!"
-                    }
+                    {"amount": "Количество ингредиента должно быть больше 0!"}
                 )
         return ingredients
 
