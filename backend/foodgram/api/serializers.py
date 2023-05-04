@@ -134,14 +134,6 @@ class IngredientRecipeSerializer(ModelSerializer):
         model = IngredientRecipe
         fields = ("id", "amount")
 
-    def validate_ingredients(self, ingredients):
-        for item in ingredients:
-            if int(item["amount"]) <= 0:
-                raise ValidationError(
-                    {"amount": "Количество ингредиента должно быть больше 0!"}
-                )
-        return ingredients
-
 
 class CreateUpdateRecipeSerializer(ModelSerializer):
     author = CustomUserSerializer(read_only=True)
@@ -198,14 +190,30 @@ class CreateUpdateRecipeSerializer(ModelSerializer):
         )
         return recipe
 
+    class Meta:
+        model = Recipe
+        exclude = ("pub_date",)
+
     def to_representation(self, instance):
         request = self.context.get("request")
         context = {"request": request}
         return RecipeSerializer(instance, context=context).data
 
-    class Meta:
-        model = Recipe
-        exclude = ("pub_date",)
+    @staticmethod
+    def validate_cooking_time(value):
+        if value <= 0:
+            raise ValidationError(
+                "Время приготовления должно быть больше нуля!"
+            )
+        return value
+
+    def validate_ingredients(self, ingredients):
+        for item in ingredients:
+            if int(item["amount"]) <= 0:
+                raise ValidationError(
+                    {"amount": "Количество ингредиента должно быть больше 0!"}
+                )
+        return ingredients
 
 
 class RecipeLimitedSerializer(ModelSerializer):
