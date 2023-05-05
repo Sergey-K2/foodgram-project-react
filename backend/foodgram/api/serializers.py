@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db.models import F
 from djoser.serializers import UserCreateSerializer, UserSerializer
@@ -125,10 +126,18 @@ class IngredientRecipeSerializer(ModelSerializer):
     amount = serializers.IntegerField(
         validators=(
             MinValueValidator(
-                1, message="Минимальное количество ингредиентов = 1"
+                settings.INGREDIENT_LOWER_LIMIT,
+                message=(
+                    f"Минимальное количество ингредиентов"
+                    "= {settings.INGREDIENT_LOWER_LIMIT}"
+                ),
             ),
             MaxValueValidator(
-                32000, message="Количество не должно быть больше 32000!"
+                settings.INGREDIENT_UPPER_LIMIT,
+                message=(
+                    f"Количество не должно быть больше"
+                    "{settings.INGREDIENT_UPPER_LIMIT}!"
+                ),
             ),
         )
     )
@@ -148,10 +157,18 @@ class CreateUpdateRecipeSerializer(ModelSerializer):
     cooking_time = serializers.IntegerField(
         validators=(
             MinValueValidator(
-                1, message="Минимальное время приготовления = 1."
+                settings.INGREDIENT_LOWER_LIMIT,
+                message=(
+                    f"Минимальное количество ингредиентов"
+                    "= {settings.INGREDIENT_LOWER_LIMIT}"
+                ),
             ),
             MaxValueValidator(
-                32000, message="Количество не должно быть больше 32000!"
+                settings.INGREDIENT_UPPER_LIMIT,
+                message=(
+                    f"Количество не должно быть больше"
+                    "{settings.INGREDIENT_UPPER_LIMIT}!"
+                ),
             ),
         )
     )
@@ -173,7 +190,6 @@ class CreateUpdateRecipeSerializer(ModelSerializer):
                 )
                 for ingredient in ingredients
             ],
-            batch_size=999,
         )
         instance.save()
         return instance
@@ -192,7 +208,6 @@ class CreateUpdateRecipeSerializer(ModelSerializer):
                 )
                 for ingredient in ingredients
             ],
-            batch_size=999,
         )
         return recipe
 
@@ -204,27 +219,6 @@ class CreateUpdateRecipeSerializer(ModelSerializer):
         request = self.context.get("request")
         context = {"request": request}
         return RecipeSerializer(instance, context=context).data
-
-    @staticmethod
-    def validate_cooking_time(value):
-        if 32000 < value <= 0:
-            raise ValidationError(
-                "Время приготовления должно быть больше нуля и меньше 32000!"
-            )
-        return value
-
-    def validate_ingredients(self, ingredients):
-        for item in ingredients:
-            if 32000 < int(item["amount"]) <= 0:
-                raise ValidationError(
-                    {
-                        "amount": (
-                            "Количество ингредиента должно"
-                            "быть в интервале от 0 до 32 000!"
-                        )
-                    }
-                )
-        return ingredients
 
 
 class RecipeLimitedSerializer(ModelSerializer):
