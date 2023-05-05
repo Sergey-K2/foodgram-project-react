@@ -84,8 +84,10 @@ class Recipe(models.Model):
         validators=(
             MinValueValidator(
                 settings.INGREDIENT_LOWER_LIMIT,
-                message=("Минимальное количество ингредиента" 
-                         f"= {settings.INGREDIENT_LOWER_LIMIT}!"),
+                message=(
+                    "Минимальное количество ингредиента"
+                    f"= {settings.INGREDIENT_LOWER_LIMIT}!"
+                ),
             ),
             MaxValueValidator(
                 settings.INGREDIENT_UPPER_LIMIT,
