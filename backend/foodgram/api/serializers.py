@@ -128,15 +128,15 @@ class IngredientRecipeSerializer(ModelSerializer):
             MinValueValidator(
                 settings.INGREDIENT_LOWER_LIMIT,
                 message=(
-                    f"Минимальное количество ингредиентов"
-                    "= {settings.INGREDIENT_LOWER_LIMIT}"
+                    "Минимальное количество ингредиентов"
+                    f"= {settings.INGREDIENT_LOWER_LIMIT}"
                 ),
             ),
             MaxValueValidator(
                 settings.INGREDIENT_UPPER_LIMIT,
                 message=(
-                    f"Количество не должно быть больше"
-                    "{settings.INGREDIENT_UPPER_LIMIT}!"
+                    "Количество не должно быть больше"
+                    f"{settings.INGREDIENT_UPPER_LIMIT}!"
                 ),
             ),
         )
@@ -159,15 +159,15 @@ class CreateUpdateRecipeSerializer(ModelSerializer):
             MinValueValidator(
                 settings.INGREDIENT_LOWER_LIMIT,
                 message=(
-                    f"Минимальное количество ингредиентов"
-                    "= {settings.INGREDIENT_LOWER_LIMIT}"
+                    "Минимальное количество ингредиентов"
+                    f"= {settings.INGREDIENT_LOWER_LIMIT}"
                 ),
             ),
             MaxValueValidator(
                 settings.INGREDIENT_UPPER_LIMIT,
                 message=(
-                    f"Количество не должно быть больше"
-                    "{settings.INGREDIENT_UPPER_LIMIT}!"
+                    "Количество не должно быть больше"
+                    f"{settings.INGREDIENT_UPPER_LIMIT}!"
                 ),
             ),
         )

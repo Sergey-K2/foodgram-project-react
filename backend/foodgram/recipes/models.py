@@ -84,16 +84,14 @@ class Recipe(models.Model):
         validators=(
             MinValueValidator(
                 settings.INGREDIENT_LOWER_LIMIT,
-                message=(
-                    f"Минимальное количество ингредиентов"
-                    "= {settings.INGREDIENT_LOWER_LIMIT}"
-                ),
+                message=("Минимальное количество ингредиента" 
+                         f"= {settings.INGREDIENT_LOWER_LIMIT}!"),
             ),
             MaxValueValidator(
                 settings.INGREDIENT_UPPER_LIMIT,
                 message=(
-                    f"Количество не должно быть больше"
-                    "{settings.INGREDIENT_UPPER_LIMIT}!"
+                    "Количество не должно быть больше"
+                    f"{settings.INGREDIENT_UPPER_LIMIT}!"
                 ),
             ),
         ),
@@ -124,15 +122,15 @@ class IngredientRecipe(models.Model):
             MinValueValidator(
                 settings.INGREDIENT_LOWER_LIMIT,
                 message=(
-                    f"Минимальное количество ингредиентов"
-                    "= {settings.INGREDIENT_LOWER_LIMIT}"
+                    "Минимальное количество ингредиента"
+                    f"= {settings.INGREDIENT_LOWER_LIMIT}!"
                 ),
             ),
             MaxValueValidator(
                 settings.INGREDIENT_UPPER_LIMIT,
                 message=(
-                    f"Количество не должно быть больше"
-                    "{settings.INGREDIENT_UPPER_LIMIT}!"
+                    "Количество не должно быть больше"
+                    f"{settings.INGREDIENT_UPPER_LIMIT}!"
                 ),
             ),
         ),
