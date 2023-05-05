@@ -6,7 +6,6 @@ from drf_base64.fields import Base64ImageField
 from recipes.models import (CustomUser, Favorite, Ingredient, IngredientRecipe,
                             Recipe, ShoppingCart, Subscription, Tag)
 from rest_framework import serializers
-from rest_framework.exceptions import ValidationError
 from rest_framework.serializers import ModelSerializer
 
 
